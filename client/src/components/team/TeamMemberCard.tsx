@@ -1,13 +1,21 @@
+import { Pencil, Trash2 } from 'lucide-react';
 import type { TeamMember } from '../../types/team';
 import Card from '../ui/Card';
 import Badge from '../ui/Badge';
+import Button from '../ui/Button';
 import SkillsRadarChart from './SkillsRadarChart';
 
 type TeamMemberCardProps = {
   member: TeamMember;
+  onEdit?: (member: TeamMember) => void;
+  onDelete?: (member: TeamMember) => void;
 };
 
-export default function TeamMemberCard({ member }: TeamMemberCardProps) {
+export default function TeamMemberCard({
+  member,
+  onEdit,
+  onDelete,
+}: TeamMemberCardProps) {
   return (
     <Card className='p-5'>
       <div className='mb-4 flex items-start justify-between gap-3'>
@@ -45,7 +53,7 @@ export default function TeamMemberCard({ member }: TeamMemberCardProps) {
         <SkillsRadarChart skills={member.skills} />
       </div>
 
-      <div>
+      <div className='mb-5'>
         <p className='mb-3 text-sm font-semibold text-slate-200'>Top Skills</p>
         <div className='flex flex-wrap gap-2'>
           <Badge tone='medium'>Design {member.skills.design}/10</Badge>
@@ -55,6 +63,28 @@ export default function TeamMemberCard({ member }: TeamMemberCardProps) {
           <Badge tone='medium'>SEO {member.skills.seo}/10</Badge>
           <Badge tone='medium'>Strategy {member.skills.strategy}/10</Badge>
         </div>
+      </div>
+
+      <div className='flex gap-2'>
+        <Button
+          type='button'
+          variant='ghost'
+          className='flex-1'
+          onClick={() => onEdit?.(member)}
+        >
+          <Pencil className='mr-2 h-4 w-4' />
+          Edit
+        </Button>
+
+        <Button
+          type='button'
+          variant='ghost'
+          className='flex-1'
+          onClick={() => onDelete?.(member)}
+        >
+          <Trash2 className='mr-2 h-4 w-4' />
+          Delete
+        </Button>
       </div>
     </Card>
   );

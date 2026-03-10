@@ -1,3 +1,5 @@
+import type { SkillKey } from './team';
+
 export type TaskPriority = 'Low' | 'Medium' | 'High' | 'Critical';
 export type TaskStatus = 'Backlog' | 'In Progress' | 'Review' | 'Completed';
 
@@ -10,5 +12,5 @@ export interface Task {
   assignedTo?: string;
   dueDate: string;
   tags: string[];
-  requiredSkills: string[];
+  requiredSkills: SkillKey[];
 }

@@ -8,6 +8,7 @@ export const taskSchema = z.object({
   assignedTo: z.string().min(1, 'Assignee is required'),
   dueDate: z.string().min(1, 'Due date is required'),
   tags: z.string().optional(),
+  requiredSkills: z.string().optional(),
 });
 
 export type TaskFormValues = z.infer<typeof taskSchema>;

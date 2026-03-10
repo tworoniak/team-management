@@ -26,3 +26,5 @@ export interface TeamMember {
   currentWorkload: number;
   skills: Skills;
 }
+
+export type SkillKey = keyof Skills;
