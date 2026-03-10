@@ -48,7 +48,22 @@ export default function StatusDonutCard({ data }: StatusDonutCardProps) {
               }
             ></Pie>
 
-            <Tooltip />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: 'rgba(0,0,0,0.8)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: '12px',
+              }}
+              itemStyle={{
+                color: '#e2e8f0',
+                fontSize: '13px',
+              }}
+              labelStyle={{
+                color: '#94a3b8',
+                fontSize: '12px',
+                marginBottom: '4px',
+              }}
+            />
           </PieChart>
         </ResponsiveContainer>
       </div>
