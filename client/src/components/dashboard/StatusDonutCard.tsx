@@ -18,7 +18,7 @@ export default function StatusDonutCard() {
               data={statusData}
               dataKey='value'
               nameKey='name'
-              innerRadius={70}
+              // innerRadius={70}
               outerRadius={100}
             >
               {statusData.map((entry, index) => (
