@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react';
 import TaskCard from '../../components/tasks/TaskCard';
 import Button from '../../components/ui/Button';
+import ConfirmDialog from '../../components/ui/ConfirmDialog';
 import { mockTasks } from '../../data/mockTasks';
-import CreateTaskModal from './CreateTaskModal';
 import type { Task, TaskStatus } from '../../types/task';
+import CreateTaskModal from './CreateTaskModal';
 import type { TaskFormValues } from './taskSchema';
 
 const filterTabs: { label: string; value: 'All' | TaskStatus }[] = [
@@ -14,7 +15,10 @@ const filterTabs: { label: string; value: 'All' | TaskStatus }[] = [
   { label: 'Completed', value: 'Completed' },
 ];
 
-function mapFormValuesToTask(values: TaskFormValues): Task {
+function mapFormValuesToTask(
+  values: TaskFormValues,
+  existingId?: string,
+): Task {
   const parsedTags =
     values.tags
       ?.split(',')
@@ -22,7 +26,7 @@ function mapFormValuesToTask(values: TaskFormValues): Task {
       .filter(Boolean) ?? [];
 
   return {
-    id: crypto.randomUUID(),
+    id: existingId ?? crypto.randomUUID(),
     title: values.title,
     description: values.description,
     priority: values.priority,
@@ -37,7 +41,14 @@ function mapFormValuesToTask(values: TaskFormValues): Task {
 export default function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>(mockTasks);
   const [activeFilter, setActiveFilter] = useState<'All' | TaskStatus>('All');
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
+
+  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
+  const [taskModalMode, setTaskModalMode] = useState<'create' | 'edit'>(
+    'create',
+  );
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+
+  const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
 
   const filteredTasks = useMemo(() => {
     if (activeFilter === 'All') return tasks;
@@ -62,9 +73,37 @@ export default function TasksPage() {
     Completed: `Completed (${counts.completed})`,
   };
 
-  const handleCreateTask = (values: TaskFormValues) => {
-    const newTask = mapFormValuesToTask(values);
-    setTasks((prev) => [newTask, ...prev]);
+  const openCreateModal = () => {
+    setTaskModalMode('create');
+    setSelectedTask(null);
+    setIsTaskModalOpen(true);
+  };
+
+  const openEditModal = (task: Task) => {
+    setTaskModalMode('edit');
+    setSelectedTask(task);
+    setIsTaskModalOpen(true);
+  };
+
+  const handleSubmitTask = (values: TaskFormValues) => {
+    if (taskModalMode === 'create') {
+      const newTask = mapFormValuesToTask(values);
+      setTasks((prev) => [newTask, ...prev]);
+      return;
+    }
+
+    if (selectedTask) {
+      const updatedTask = mapFormValuesToTask(values, selectedTask.id);
+      setTasks((prev) =>
+        prev.map((task) => (task.id === selectedTask.id ? updatedTask : task)),
+      );
+    }
+  };
+
+  const handleDeleteTask = () => {
+    if (!taskToDelete) return;
+    setTasks((prev) => prev.filter((task) => task.id !== taskToDelete.id));
+    setTaskToDelete(null);
   };
 
   return (
@@ -77,7 +116,7 @@ export default function TasksPage() {
           </p>
         </div>
 
-        <Button onClick={() => setIsCreateOpen(true)}>+ Create Task</Button>
+        <Button onClick={openCreateModal}>+ Create Task</Button>
       </div>
 
       <div className='flex flex-wrap gap-2 rounded-xl border border-white/10 bg-white/5 p-2'>
@@ -103,14 +142,34 @@ export default function TasksPage() {
 
       <div className='grid gap-6 md:grid-cols-2 xl:grid-cols-3'>
         {filteredTasks.map((task) => (
-          <TaskCard key={task.id} task={task} />
+          <TaskCard
+            key={task.id}
+            task={task}
+            onEdit={openEditModal}
+            onDelete={setTaskToDelete}
+          />
         ))}
       </div>
 
       <CreateTaskModal
-        isOpen={isCreateOpen}
-        onClose={() => setIsCreateOpen(false)}
-        onCreateTask={handleCreateTask}
+        isOpen={isTaskModalOpen}
+        onClose={() => setIsTaskModalOpen(false)}
+        onSubmitTask={handleSubmitTask}
+        mode={taskModalMode}
+        initialTask={selectedTask}
+      />
+
+      <ConfirmDialog
+        isOpen={!!taskToDelete}
+        onClose={() => setTaskToDelete(null)}
+        onConfirm={handleDeleteTask}
+        title='Delete Task'
+        message={
+          taskToDelete
+            ? `Are you sure you want to delete "${taskToDelete.title}"? This action cannot be undone.`
+            : ''
+        }
+        confirmLabel='Delete Task'
       />
     </section>
   );
