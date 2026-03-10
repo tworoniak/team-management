@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import Modal from '../../components/ui/Modal';
@@ -6,11 +7,14 @@ import Textarea from '../../components/ui/Textarea';
 import Select from '../../components/ui/Select';
 import Button from '../../components/ui/Button';
 import { taskSchema, type TaskFormValues } from './taskSchema';
+import type { Task } from '../../types/task';
 
-type CreateTaskModalProps = {
+type TaskModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  onCreateTask: (values: TaskFormValues) => void;
+  onSubmitTask: (values: TaskFormValues) => void;
+  mode: 'create' | 'edit';
+  initialTask?: Task | null;
 };
 
 const priorityOptions = [
@@ -35,37 +39,51 @@ const assigneeOptions = [
   { label: 'Unassigned', value: 'Unassigned' },
 ] as const;
 
+function taskToFormValues(task?: Task | null): TaskFormValues {
+  return {
+    title: task?.title ?? '',
+    description: task?.description ?? '',
+    priority: task?.priority ?? 'Medium',
+    status: task?.status ?? 'Backlog',
+    assignedTo: task?.assignedTo ?? 'Unassigned',
+    dueDate: task?.dueDate ?? '',
+    tags: task?.tags?.join(', ') ?? '',
+  };
+}
+
 export default function CreateTaskModal({
   isOpen,
   onClose,
-  onCreateTask,
-}: CreateTaskModalProps) {
+  onSubmitTask,
+  mode,
+  initialTask,
+}: TaskModalProps) {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
     reset,
+    formState: { errors, isSubmitting },
   } = useForm<TaskFormValues>({
     resolver: zodResolver(taskSchema),
-    defaultValues: {
-      title: '',
-      description: '',
-      priority: 'Medium',
-      status: 'Backlog',
-      assignedTo: 'Unassigned',
-      dueDate: '',
-      tags: '',
-    },
+    defaultValues: taskToFormValues(initialTask),
   });
 
+  useEffect(() => {
+    reset(taskToFormValues(initialTask));
+  }, [initialTask, reset, isOpen]);
+
   const onSubmit = (values: TaskFormValues) => {
-    onCreateTask(values);
-    reset();
+    onSubmitTask(values);
+    reset(taskToFormValues(null));
     onClose();
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title='Create Task'>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={mode === 'create' ? 'Create Task' : 'Edit Task'}
+    >
       <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
         <Input
           label='Title'
@@ -84,14 +102,14 @@ export default function CreateTaskModal({
         <div className='grid gap-4 md:grid-cols-2'>
           <Select
             label='Priority'
-            options={priorityOptions.map((o) => ({ ...o }))}
+            options={[...priorityOptions]}
             error={errors.priority?.message}
             {...register('priority')}
           />
 
           <Select
             label='Status'
-            options={statusOptions.map((o) => ({ ...o }))}
+            options={[...statusOptions]}
             error={errors.status?.message}
             {...register('status')}
           />
@@ -100,7 +118,7 @@ export default function CreateTaskModal({
         <div className='grid gap-4 md:grid-cols-2'>
           <Select
             label='Assign To'
-            options={assigneeOptions.map((o) => ({ ...o }))}
+            options={[...assigneeOptions]}
             error={errors.assignedTo?.message}
             {...register('assignedTo')}
           />
@@ -125,7 +143,7 @@ export default function CreateTaskModal({
             Cancel
           </Button>
           <Button type='submit' disabled={isSubmitting}>
-            Create Task
+            {mode === 'create' ? 'Create Task' : 'Save Changes'}
           </Button>
         </div>
       </form>

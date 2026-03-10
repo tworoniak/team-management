@@ -4,25 +4,29 @@ import { mockTeam } from '../../data/mockTeam';
 export default function TeamWorkloadCard() {
   return (
     <Card className='p-5'>
-      <h2 className='mb-5 text-2xl font-bold tracking-tight'>Team Workload</h2>
+      <h2 className='mb-6 text-2xl font-bold text-white'>Team Workload</h2>
 
-      <div className='space-y-5'>
+      <div className='space-y-6'>
         {mockTeam.map((member) => (
           <div key={member.id}>
-            <div className='mb-2 flex items-center justify-between gap-3'>
+            <div className='mb-2 flex items-center justify-between'>
               <div>
-                <p className='font-semibold'>{member.fullName}</p>
-                <p className='text-sm text-muted'>{member.role}</p>
+                <p className='font-semibold text-white'>{member.fullName}</p>
+                <p className='text-sm text-slate-400'>{member.role}</p>
               </div>
-              <p className='text-sm font-semibold text-textSoft'>
+
+              <span className='text-lg font-semibold text-white'>
                 {member.currentWorkload}%
-              </p>
+              </span>
             </div>
 
-            <div className='h-3 rounded-full bg-white/10'>
+            {/* progress bar */}
+            <div className='h-3 w-full overflow-hidden rounded-full bg-white/10'>
               <div
-                className='h-3 rounded-full bg-gradient-to-r from-primary to-violet'
-                style={{ width: `${member.currentWorkload}%` }}
+                className='h-full rounded-full bg-linear-to-r from-blue-500 to-violet-500 transition-all'
+                style={{
+                  width: `${member.currentWorkload}%`,
+                }}
               />
             </div>
           </div>
