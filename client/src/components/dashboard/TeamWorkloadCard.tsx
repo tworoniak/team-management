@@ -1,13 +1,15 @@
 import Card from '../ui/Card';
-import { mockTeam } from '../../data/mockTeam';
+import { useTeamStore } from '../../stores/teamStore';
 
 export default function TeamWorkloadCard() {
+  const team = useTeamStore((state) => state.team);
+
   return (
     <Card className='p-5'>
       <h2 className='mb-6 text-2xl font-bold text-white'>Team Workload</h2>
 
       <div className='space-y-6'>
-        {mockTeam.map((member) => (
+        {team.map((member) => (
           <div key={member.id}>
             <div className='mb-2 flex items-center justify-between'>
               <div>
@@ -20,13 +22,16 @@ export default function TeamWorkloadCard() {
               </span>
             </div>
 
-            {/* progress bar */}
             <div className='h-3 w-full overflow-hidden rounded-full bg-white/10'>
               <div
-                className='h-full rounded-full bg-linear-to-r from-blue-500 to-violet-500 transition-all'
-                style={{
-                  width: `${member.currentWorkload}%`,
-                }}
+                className={`h-full rounded-full transition-all ${
+                  member.currentWorkload > 90
+                    ? 'bg-red-500'
+                    : member.currentWorkload > 70
+                      ? 'bg-amber-400'
+                      : 'bg-emerald-400'
+                }`}
+                style={{ width: `${member.currentWorkload}%` }}
               />
             </div>
           </div>

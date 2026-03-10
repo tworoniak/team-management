@@ -48,6 +48,7 @@ function taskToFormValues(task?: Task | null): TaskFormValues {
     assignedTo: task?.assignedTo ?? 'Unassigned',
     dueDate: task?.dueDate ?? '',
     tags: task?.tags?.join(', ') ?? '',
+    requiredSkills: task?.requiredSkills?.join(', ') ?? '',
   };
 }
 
@@ -136,6 +137,13 @@ export default function CreateTaskModal({
           placeholder='e.g. seo, content, launch'
           error={errors.tags?.message}
           {...register('tags')}
+        />
+
+        <Input
+          label='Required Skills'
+          placeholder='e.g. design, copywriting, seo'
+          error={errors.requiredSkills?.message}
+          {...register('requiredSkills')}
         />
 
         <div className='flex justify-end gap-3 pt-2'>

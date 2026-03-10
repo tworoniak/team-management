@@ -2,10 +2,11 @@ import { useMemo, useState } from 'react';
 import TaskCard from '../../components/tasks/TaskCard';
 import Button from '../../components/ui/Button';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
-import { mockTasks } from '../../data/mockTasks';
 import type { Task, TaskStatus } from '../../types/task';
 import CreateTaskModal from './CreateTaskModal';
 import type { TaskFormValues } from './taskSchema';
+import { useTaskStore } from '../../stores/taskStore';
+import type { SkillKey } from '../../types/team';
 
 const filterTabs: { label: string; value: 'All' | TaskStatus }[] = [
   { label: 'All Tasks', value: 'All' },
@@ -13,6 +14,17 @@ const filterTabs: { label: string; value: 'All' | TaskStatus }[] = [
   { label: 'In Progress', value: 'In Progress' },
   { label: 'Review', value: 'Review' },
   { label: 'Completed', value: 'Completed' },
+];
+
+const validSkills: SkillKey[] = [
+  'contentCreation',
+  'socialMedia',
+  'seo',
+  'ppcAdvertising',
+  'design',
+  'copywriting',
+  'analytics',
+  'strategy',
 ];
 
 function mapFormValuesToTask(
@@ -25,6 +37,12 @@ function mapFormValuesToTask(
       .map((tag) => tag.trim())
       .filter(Boolean) ?? [];
 
+  const parsedSkills =
+    values.requiredSkills
+      ?.split(',')
+      .map((skill) => skill.trim() as SkillKey)
+      .filter((skill): skill is SkillKey => validSkills.includes(skill)) ?? [];
+
   return {
     id: existingId ?? crypto.randomUUID(),
     title: values.title,
@@ -34,20 +52,19 @@ function mapFormValuesToTask(
     assignedTo: values.assignedTo,
     dueDate: values.dueDate,
     tags: parsedTags,
-    requiredSkills: [],
+    requiredSkills: parsedSkills,
   };
 }
 
 export default function TasksPage() {
-  const [tasks, setTasks] = useState<Task[]>(mockTasks);
-  const [activeFilter, setActiveFilter] = useState<'All' | TaskStatus>('All');
+  const { tasks, addTask, updateTask, deleteTask } = useTaskStore();
 
+  const [activeFilter, setActiveFilter] = useState<'All' | TaskStatus>('All');
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [taskModalMode, setTaskModalMode] = useState<'create' | 'edit'>(
     'create',
   );
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-
   const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
 
   const filteredTasks = useMemo(() => {
@@ -87,22 +104,18 @@ export default function TasksPage() {
 
   const handleSubmitTask = (values: TaskFormValues) => {
     if (taskModalMode === 'create') {
-      const newTask = mapFormValuesToTask(values);
-      setTasks((prev) => [newTask, ...prev]);
+      addTask(mapFormValuesToTask(values));
       return;
     }
 
     if (selectedTask) {
-      const updatedTask = mapFormValuesToTask(values, selectedTask.id);
-      setTasks((prev) =>
-        prev.map((task) => (task.id === selectedTask.id ? updatedTask : task)),
-      );
+      updateTask(mapFormValuesToTask(values, selectedTask.id));
     }
   };
 
   const handleDeleteTask = () => {
     if (!taskToDelete) return;
-    setTasks((prev) => prev.filter((task) => task.id !== taskToDelete.id));
+    deleteTask(taskToDelete.id);
     setTaskToDelete(null);
   };
 
@@ -146,7 +159,7 @@ export default function TasksPage() {
             key={task.id}
             task={task}
             onEdit={openEditModal}
-            onDelete={setTaskToDelete}
+            onDelete={(task) => setTaskToDelete(task)}
           />
         ))}
       </div>

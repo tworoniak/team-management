@@ -7,8 +7,8 @@ import StatusDonutCard from '../../components/dashboard/StatusDonutCard';
 import PriorityOverviewCard from '../../components/dashboard/PriorityOverviewCard';
 import TeamWorkloadCard from '../../components/dashboard/TeamWorkloadCard';
 
-import { mockTasks } from '../../data/mockTasks';
-import { mockTeam } from '../../data/mockTeam';
+import { useTaskStore } from '../../stores/taskStore';
+import { useTeamStore } from '../../stores/teamStore';
 
 import {
   getActiveTasks,
@@ -19,17 +19,13 @@ import {
 } from '../../lib/dashboardAnalytics';
 
 export default function DashboardPage() {
-  const tasks = mockTasks;
-  const team = mockTeam;
+  const tasks = useTaskStore((state) => state.tasks);
+  const team = useTeamStore((state) => state.team);
 
   const activeTasks = useMemo(() => getActiveTasks(tasks), [tasks]);
-
   const highPriority = useMemo(() => getHighPriorityTasks(tasks), [tasks]);
-
   const avgWorkload = useMemo(() => getAverageWorkload(team), [team]);
-
   const statusData = useMemo(() => getStatusDistribution(tasks), [tasks]);
-
   const priorityData = useMemo(() => getPriorityDistribution(tasks), [tasks]);
 
   return (
@@ -48,7 +44,6 @@ export default function DashboardPage() {
           helper='Active members'
           icon={Users}
         />
-
         <StatCard
           label='Active Tasks'
           value={activeTasks}
@@ -56,7 +51,6 @@ export default function DashboardPage() {
           icon={Activity}
           iconClassName='text-emerald-300'
         />
-
         <StatCard
           label='Avg Workload'
           value={`${avgWorkload}%`}
@@ -64,7 +58,6 @@ export default function DashboardPage() {
           icon={TrendingUp}
           iconClassName='text-amber-300'
         />
-
         <StatCard
           label='High Priority'
           value={highPriority}
@@ -76,7 +69,6 @@ export default function DashboardPage() {
 
       <div className='grid gap-6 xl:grid-cols-[1.7fr_1fr]'>
         <RecentActivityPanel />
-
         <div className='space-y-6'>
           <StatusDonutCard data={statusData} />
           <PriorityOverviewCard data={priorityData} />
