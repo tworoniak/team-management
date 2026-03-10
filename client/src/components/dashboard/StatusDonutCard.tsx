@@ -1,5 +1,5 @@
 import Card from '../ui/Card';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { PieChart, Pie, ResponsiveContainer, Tooltip } from 'recharts';
 
 type StatusDonutCardProps = {
   data: { name: string; value: number }[];
@@ -8,6 +8,22 @@ type StatusDonutCardProps = {
 const COLORS = ['#64748b', '#4f8cff', '#8b5cf6', '#10b981'];
 
 export default function StatusDonutCard({ data }: StatusDonutCardProps) {
+  const coloredData = data.map((item, index) => ({
+    ...item,
+    fill: COLORS[index % COLORS.length],
+  }));
+
+  if (!data.length) {
+    return (
+      <Card className='p-5'>
+        <h2 className='text-2xl font-bold text-white'>
+          Task Status Distribution
+        </h2>
+        <p className='mt-4 text-slate-400'>No task data available</p>
+      </Card>
+    );
+  }
+
   return (
     <Card className='p-5'>
       <h2 className='mb-4 text-2xl font-bold text-white'>
@@ -18,20 +34,36 @@ export default function StatusDonutCard({ data }: StatusDonutCardProps) {
         <ResponsiveContainer>
           <PieChart>
             <Pie
-              data={data}
+              data={coloredData}
               dataKey='value'
               nameKey='name'
-              // innerRadius={70}
+              cx='50%'
+              cy='50%'
               outerRadius={100}
-            >
-              {data.map((entry, index) => (
-                <Cell key={entry.name} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Pie>
+              stroke='none'
+              fontSize={12}
+              isAnimationActive={false}
+              label={({ name, percent = 0 }) =>
+                percent > 0.05 ? `${name} ${(percent * 100).toFixed(0)}%` : ''
+              }
+            ></Pie>
 
             <Tooltip />
           </PieChart>
         </ResponsiveContainer>
+      </div>
+      <div className='mt-4 flex flex-wrap items-center justify-center gap-4'>
+        {coloredData.map((entry) => (
+          <div key={entry.name} className='flex items-center gap-2'>
+            <span
+              className='inline-block h-3 w-3 rounded-full'
+              style={{ backgroundColor: entry.fill }}
+            />
+            <span className='text-sm' style={{ color: entry.fill }}>
+              {entry.name}
+            </span>
+          </div>
+        ))}
       </div>
     </Card>
   );
