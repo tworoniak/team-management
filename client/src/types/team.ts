@@ -1,7 +1,7 @@
 export type TeamRole =
   | 'Designer'
-  | 'Content Creator'
-  | 'Marketing Manager'
+  | 'Frontend Developer'
+  | 'Backend Developer'
   | 'SEO Specialist'
   | 'PPC Specialist'
   | 'Social Media Manager';
@@ -15,6 +15,12 @@ export interface Skills {
   copywriting: number;
   analytics: number;
   strategy: number;
+  react: number;
+  typescript: number;
+  css: number;
+  nodejs: number;
+  postgres: number;
+  jest: number;
 }
 
 export interface TeamMember {

@@ -17,25 +17,22 @@ export const priorityData: PriorityDatum[] = [
 export const recentActivity = [
   {
     id: '1',
-    title: 'LinkedIn Ad Campaign Optimization',
-    description:
-      'Review and optimize current LinkedIn ad campaigns to improve CTR and reduce CPC.',
+    title: 'Dashboard Redesign',
+    description: 'Full redesign of the main customer dashboard.',
     priority: 'High',
     status: 'Backlog',
   },
   {
     id: '2',
-    title: 'Landing Page Design for Summer Sale',
-    description:
-      'Design a visually appealing and high-converting landing page for the upcoming sale.',
+    title: 'API v3 Migration',
+    description: 'Migrate all endpoints to the new v3 API architecture.',
     priority: 'Critical',
     status: 'Backlog',
   },
   {
     id: '3',
-    title: 'Brand Identity Refresh',
-    description:
-      'Update brand guidelines and create new visual assets for marketing materials.',
+    title: 'Mobile App',
+    description: 'React Native mobile companion app.',
     priority: 'Low',
     status: 'In Progress',
   },
