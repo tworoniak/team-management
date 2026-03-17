@@ -1,4 +1,6 @@
 import type { TaskPriority, TaskStatus } from '../types/task';
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 export function priorityTone(priority: TaskPriority) {
   switch (priority) {
@@ -29,3 +31,9 @@ export function statusTone(status: TaskStatus) {
       return 'backlog';
   }
 }
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+// export const isIframe = window.self !== window.top;

@@ -40,6 +40,7 @@ export default function StatusDonutCard({ data }: StatusDonutCardProps) {
               cx='50%'
               cy='50%'
               outerRadius={100}
+              innerRadius={60}
               stroke='none'
               fontSize={12}
               isAnimationActive={false}

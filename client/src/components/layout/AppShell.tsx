@@ -1,29 +1,20 @@
-// import { Outlet } from 'react-router-dom';
-// import TopNav from './TopNav';
-// import PageContainer from './PageContainer';
-
-// export default function AppShell() {
-//   return (
-//     <div className='min-h-screen'>
-//       <TopNav />
-//       <PageContainer>
-//         <Outlet />
-//       </PageContainer>
-//     </div>
-//   );
-// }
-
 import { Outlet } from 'react-router-dom';
 import TopNav from './TopNav';
+import Footer from './Footer';
+import PageContainer from './PageContainer';
+import ScrollToTop from '../ui/ScrollToTop';
+import ScrollToTopButton from '../ui/ScrollToTopButton';
 
 export default function AppShell() {
   return (
-    <div className='min-h-screen'>
+    <>
+      <ScrollToTop />
       <TopNav />
-
-      <main className='mx-auto max-w-7xl px-6 py-10'>
+      <PageContainer>
         <Outlet />
-      </main>
-    </div>
+      </PageContainer>
+      <Footer />
+      <ScrollToTopButton />
+    </>
   );
 }

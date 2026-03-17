@@ -45,7 +45,12 @@ export default function PriorityOverviewCard({
               }}
               cursor={{ fill: 'transparent' }}
             />
-            <Bar dataKey='value' fill='#4f8cff' radius={[0, 8, 8, 0]} />
+            <Bar
+              dataKey='value'
+              fill='#4f8cff'
+              barSize='40'
+              //radius={[0, 8, 8, 0]}
+            />
           </BarChart>
         </ResponsiveContainer>
       </div>

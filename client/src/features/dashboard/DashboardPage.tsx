@@ -31,7 +31,7 @@ export default function DashboardPage() {
   return (
     <section className='space-y-8'>
       <div>
-        <h1 className='text-5xl font-bold text-white'>Marketing Dashboard</h1>
+        <h1 className='text-5xl font-bold text-white'>Development Dashboard</h1>
         <p className='mt-3 text-lg text-slate-400'>
           Welcome back. Here’s your team’s performance snapshot.
         </p>
