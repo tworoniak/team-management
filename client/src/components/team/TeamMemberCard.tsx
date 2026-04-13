@@ -1,9 +1,26 @@
 import { Pencil, Trash2 } from 'lucide-react';
-import type { TeamMember } from '../../types/team';
+import type { TeamMember, SkillKey } from '../../types/team';
 import Card from '../ui/Card';
 import Badge from '../ui/Badge';
 import Button from '../ui/Button';
 import SkillsRadarChart from './SkillsRadarChart';
+
+const skillLabel: Record<SkillKey, string> = {
+  contentCreation: 'Content',
+  socialMedia: 'Social',
+  seo: 'SEO',
+  ppcAdvertising: 'PPC',
+  design: 'Design',
+  copywriting: 'Copywriting',
+  analytics: 'Analytics',
+  strategy: 'Strategy',
+  react: 'React',
+  typescript: 'TypeScript',
+  css: 'CSS',
+  nodejs: 'Node.js',
+  postgres: 'Postgres',
+  jest: 'Jest',
+};
 
 type TeamMemberCardProps = {
   member: TeamMember;
@@ -16,6 +33,10 @@ export default function TeamMemberCard({
   onEdit,
   onDelete,
 }: TeamMemberCardProps) {
+  const topSkills = (Object.entries(member.skills) as [SkillKey, number][])
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, 4);
+
   return (
     <Card className='p-5'>
       <div className='mb-4 flex items-start justify-between gap-3'>
@@ -56,12 +77,11 @@ export default function TeamMemberCard({
       <div className='mb-5'>
         <p className='mb-3 text-sm font-semibold text-slate-200'>Top Skills</p>
         <div className='flex flex-wrap gap-2'>
-          <Badge tone='medium'>Design {member.skills.design}/10</Badge>
-          <Badge tone='medium'>
-            Content {member.skills.contentCreation}/10
-          </Badge>
-          <Badge tone='medium'>SEO {member.skills.seo}/10</Badge>
-          <Badge tone='medium'>Strategy {member.skills.strategy}/10</Badge>
+          {topSkills.map(([key, value]) => (
+            <Badge key={key} tone='medium'>
+              {skillLabel[key]} {value}/10
+            </Badge>
+          ))}
         </div>
       </div>
 

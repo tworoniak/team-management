@@ -13,4 +13,5 @@ export interface Task {
   dueDate: string;
   tags: string[];
   requiredSkills: SkillKey[];
+  createdAt: string;
 }

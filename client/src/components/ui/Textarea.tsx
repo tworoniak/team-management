@@ -1,5 +1,5 @@
 import type { TextareaHTMLAttributes } from 'react';
-import clsx from 'clsx';
+import { cn } from '../../lib/utils';
 
 type TextareaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & {
   label: string;
@@ -16,7 +16,7 @@ export default function Textarea({
     <label className='block space-y-2'>
       <span className='text-sm font-medium text-slate-200'>{label}</span>
       <textarea
-        className={clsx(
+        className={cn(
           'min-h-30 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition placeholder:text-slate-500 focus:border-blue-500',
           className,
         )}

@@ -1,4 +1,4 @@
-import type { Task } from '../types/task';
+import type { Task, TaskStatus, TaskPriority } from '../types/task';
 import type { TeamMember } from '../types/team';
 
 export function getActiveTasks(tasks: Task[]) {
@@ -21,7 +21,7 @@ export function getAverageWorkload(team: TeamMember[]) {
 }
 
 export function getStatusDistribution(tasks: Task[]) {
-  const map: Record<string, number> = {
+  const map: Record<TaskStatus, number> = {
     Backlog: 0,
     'In Progress': 0,
     Review: 0,
@@ -39,7 +39,7 @@ export function getStatusDistribution(tasks: Task[]) {
 }
 
 export function getPriorityDistribution(tasks: Task[]) {
-  const map: Record<string, number> = {
+  const map: Record<TaskPriority, number> = {
     Low: 0,
     Medium: 0,
     High: 0,

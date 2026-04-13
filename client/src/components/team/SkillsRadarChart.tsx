@@ -21,6 +21,12 @@ export default function SkillsRadarChart({ skills }: SkillsRadarChartProps) {
     { subject: 'Copy', value: skills.copywriting, fullMark: 10 },
     { subject: 'Analytics', value: skills.analytics, fullMark: 10 },
     { subject: 'Strategy', value: skills.strategy, fullMark: 10 },
+    { subject: 'React', value: skills.react, fullMark: 10 },
+    { subject: 'TS', value: skills.typescript, fullMark: 10 },
+    { subject: 'CSS', value: skills.css, fullMark: 10 },
+    { subject: 'Node', value: skills.nodejs, fullMark: 10 },
+    { subject: 'PG', value: skills.postgres, fullMark: 10 },
+    { subject: 'Jest', value: skills.jest, fullMark: 10 },
   ];
 
   return (
@@ -30,7 +36,7 @@ export default function SkillsRadarChart({ skills }: SkillsRadarChartProps) {
           <PolarGrid stroke='rgba(255,255,255,0.12)' />
           <PolarAngleAxis
             dataKey='subject'
-            tick={{ fill: '#94a3b8', fontSize: 12 }}
+            tick={{ fill: '#94a3b8', fontSize: 11 }}
           />
           <Radar
             name='Skills'

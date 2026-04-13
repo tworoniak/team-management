@@ -6,7 +6,7 @@ import type { Task, TaskStatus } from '../../types/task';
 import CreateTaskModal from './CreateTaskModal';
 import type { TaskFormValues } from './taskSchema';
 import { useTaskStore } from '../../stores/taskStore';
-import type { SkillKey } from '../../types/team';
+import { mapFormValuesToTask } from '../../lib/transforms';
 
 const filterTabs: { label: string; value: 'All' | TaskStatus }[] = [
   { label: 'All Tasks', value: 'All' },
@@ -15,46 +15,6 @@ const filterTabs: { label: string; value: 'All' | TaskStatus }[] = [
   { label: 'Review', value: 'Review' },
   { label: 'Completed', value: 'Completed' },
 ];
-
-const validSkills: SkillKey[] = [
-  'contentCreation',
-  'socialMedia',
-  'seo',
-  'ppcAdvertising',
-  'design',
-  'copywriting',
-  'analytics',
-  'strategy',
-];
-
-function mapFormValuesToTask(
-  values: TaskFormValues,
-  existingId?: string,
-): Task {
-  const parsedTags =
-    values.tags
-      ?.split(',')
-      .map((tag) => tag.trim())
-      .filter(Boolean) ?? [];
-
-  const parsedSkills =
-    values.requiredSkills
-      ?.split(',')
-      .map((skill) => skill.trim() as SkillKey)
-      .filter((skill): skill is SkillKey => validSkills.includes(skill)) ?? [];
-
-  return {
-    id: existingId ?? crypto.randomUUID(),
-    title: values.title,
-    description: values.description,
-    priority: values.priority,
-    status: values.status,
-    assignedTo: values.assignedTo,
-    dueDate: values.dueDate,
-    tags: parsedTags,
-    requiredSkills: parsedSkills,
-  };
-}
 
 export default function TasksPage() {
   const { tasks, addTask, updateTask, deleteTask } = useTaskStore();
@@ -109,7 +69,7 @@ export default function TasksPage() {
     }
 
     if (selectedTask) {
-      updateTask(mapFormValuesToTask(values, selectedTask.id));
+      updateTask(mapFormValuesToTask(values, selectedTask));
     }
   };
 
@@ -132,7 +92,11 @@ export default function TasksPage() {
         <Button onClick={openCreateModal}>+ Create Task</Button>
       </div>
 
-      <div className='flex flex-wrap gap-2 rounded-xl border border-white/10 bg-white/5 p-2'>
+      <div
+        role='tablist'
+        aria-label='Filter tasks by status'
+        className='flex flex-wrap gap-2 rounded-xl border border-white/10 bg-white/5 p-2'
+      >
         {filterTabs.map((tab) => {
           const isActive = activeFilter === tab.value;
 
@@ -140,6 +104,10 @@ export default function TasksPage() {
             <button
               key={tab.value}
               type='button'
+              role='tab'
+              aria-selected={isActive}
+              aria-controls='task-panel'
+              id={`tab-${tab.value}`}
               onClick={() => setActiveFilter(tab.value)}
               className={`rounded-lg px-4 py-2 text-sm font-semibold transition ${
                 isActive
@@ -153,7 +121,12 @@ export default function TasksPage() {
         })}
       </div>
 
-      <div className='grid gap-6 md:grid-cols-2 xl:grid-cols-3'>
+      <div
+        id='task-panel'
+        role='tabpanel'
+        aria-labelledby={`tab-${activeFilter}`}
+        className='grid gap-6 md:grid-cols-2 xl:grid-cols-3'
+      >
         {filteredTasks.map((task) => (
           <TaskCard
             key={task.id}

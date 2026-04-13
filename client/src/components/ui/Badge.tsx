@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import clsx from 'clsx';
+import { cn } from '../../lib/utils';
 
 type BadgeTone =
   | 'low'
@@ -32,7 +32,7 @@ const toneMap: Record<BadgeTone, string> = {
 export default function Badge({ children, tone = 'medium' }: BadgeProps) {
   return (
     <span
-      className={clsx(
+      className={cn(
         'inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-semibold',
         toneMap[tone],
       )}

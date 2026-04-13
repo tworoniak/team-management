@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { mockTasks } from '../data/mockTasks';
 import type { Task } from '../types/task';
 
@@ -10,25 +11,30 @@ type TaskStore = {
   deleteTask: (taskId: string) => void;
 };
 
-export const useTaskStore = create<TaskStore>((set) => ({
-  tasks: mockTasks,
+export const useTaskStore = create<TaskStore>()(
+  persist(
+    (set) => ({
+      tasks: mockTasks,
 
-  setTasks: (tasks) => set({ tasks }),
+      setTasks: (tasks) => set({ tasks }),
 
-  addTask: (task) =>
-    set((state) => ({
-      tasks: [task, ...state.tasks],
-    })),
+      addTask: (task) =>
+        set((state) => ({
+          tasks: [task, ...state.tasks],
+        })),
 
-  updateTask: (updatedTask) =>
-    set((state) => ({
-      tasks: state.tasks.map((task) =>
-        task.id === updatedTask.id ? updatedTask : task,
-      ),
-    })),
+      updateTask: (updatedTask) =>
+        set((state) => ({
+          tasks: state.tasks.map((task) =>
+            task.id === updatedTask.id ? updatedTask : task,
+          ),
+        })),
 
-  deleteTask: (taskId) =>
-    set((state) => ({
-      tasks: state.tasks.filter((task) => task.id !== taskId),
-    })),
-}));
+      deleteTask: (taskId) =>
+        set((state) => ({
+          tasks: state.tasks.filter((task) => task.id !== taskId),
+        })),
+    }),
+    { name: 'taskflow-tasks' },
+  ),
+);
