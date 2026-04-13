@@ -62,16 +62,28 @@ export default function TeamPage() {
         <Button onClick={openCreateModal}>+ Add Member</Button>
       </div>
 
-      <div className='grid gap-6 lg:grid-cols-2 xl:grid-cols-3'>
-        {team.map((member) => (
-          <TeamMemberCard
-            key={member.id}
-            member={member}
-            onEdit={openEditModal}
-            onDelete={(member) => setMemberToDelete(member)}
-          />
-        ))}
-      </div>
+      {team.length > 0 ? (
+        <div className='grid gap-6 lg:grid-cols-2 xl:grid-cols-3'>
+          {team.map((member) => (
+            <TeamMemberCard
+              key={member.id}
+              member={member}
+              onEdit={openEditModal}
+              onDelete={(member) => setMemberToDelete(member)}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className='flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-white/3 py-16 text-center'>
+          <p className='text-2xl font-semibold text-slate-300'>No team members yet</p>
+          <p className='mt-2 text-sm text-slate-500'>
+            Add your first team member to start tracking skills and workload.
+          </p>
+          <Button className='mt-6' onClick={openCreateModal}>
+            + Add Member
+          </Button>
+        </div>
+      )}
 
       <TeamMemberModal
         isOpen={isMemberModalOpen}

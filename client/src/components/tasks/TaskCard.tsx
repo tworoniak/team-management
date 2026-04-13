@@ -1,9 +1,9 @@
-import { Pencil, Trash2 } from 'lucide-react';
+import { Pencil, Trash2, AlertTriangle } from 'lucide-react';
 import type { Task } from '../../types/task';
 import Card from '../ui/Card';
 import Badge from '../ui/Badge';
 import Button from '../ui/Button';
-import { priorityTone, statusTone } from '../../lib/utils';
+import { priorityTone, statusTone, cn } from '../../lib/utils';
 
 type TaskCardProps = {
   task: Task;
@@ -11,15 +11,28 @@ type TaskCardProps = {
   onDelete?: (task: Task) => void;
 };
 
+const today = new Date().toISOString().split('T')[0];
+
 export default function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
+  const isOverdue =
+    task.status !== 'Completed' && !!task.dueDate && task.dueDate < today;
+
   return (
-    <Card className='p-5'>
+    <Card className={cn('flex flex-col p-5', isOverdue && 'border-red-500/40')}>
       <div className='mb-4 flex items-start justify-between gap-3'>
         <h3 className='max-w-[70%] text-xl font-bold text-white'>
           {task.title}
         </h3>
 
-        <Badge tone={priorityTone(task.priority)}>{task.priority}</Badge>
+        <div className='flex flex-col items-end gap-1.5'>
+          <Badge tone={priorityTone(task.priority)}>{task.priority}</Badge>
+          {isOverdue && (
+            <Badge tone='critical'>
+              <AlertTriangle className='mr-1 h-3 w-3' />
+              Overdue
+            </Badge>
+          )}
+        </div>
       </div>
 
       <p className='mb-4 line-clamp-3 text-sm text-slate-400'>
@@ -47,9 +60,11 @@ export default function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
         </div>
       ) : null}
 
-      <div className='mb-4 text-sm text-slate-400'>Due: {task.dueDate}</div>
+      <div className={cn('mb-4 text-sm', isOverdue ? 'text-red-400' : 'text-slate-400')}>
+        Due: {task.dueDate}
+      </div>
 
-      <div className='flex gap-2'>
+      <div className='mt-auto flex gap-2'>
         <Button
           type='button'
           variant='ghost'
