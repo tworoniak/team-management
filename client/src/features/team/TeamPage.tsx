@@ -6,30 +6,7 @@ import TeamMemberModal from './TeamMemberModal';
 import { useTeamStore } from '../../stores/teamStore';
 import type { TeamMember } from '../../types/team';
 import type { TeamFormValues } from './teamSchema';
-
-function mapFormValuesToMember(
-  values: TeamFormValues,
-  existingId?: string,
-): TeamMember {
-  return {
-    id: existingId ?? crypto.randomUUID(),
-    fullName: values.fullName,
-    email: values.email,
-    role: values.role,
-    availability: values.availability,
-    currentWorkload: values.currentWorkload,
-    skills: {
-      contentCreation: values.skills.contentCreation,
-      socialMedia: values.skills.socialMedia,
-      seo: values.skills.seo,
-      ppcAdvertising: values.skills.ppcAdvertising,
-      design: values.skills.design,
-      copywriting: values.skills.copywriting,
-      analytics: values.skills.analytics,
-      strategy: values.skills.strategy,
-    },
-  };
-}
+import { mapFormValuesToMember } from '../../lib/transforms';
 
 export default function TeamPage() {
   const { team, addMember, updateMember, deleteMember } = useTeamStore();
@@ -60,7 +37,7 @@ export default function TeamPage() {
     }
 
     if (selectedMember) {
-      updateMember(mapFormValuesToMember(values, selectedMember.id));
+      updateMember(mapFormValuesToMember(values, selectedMember));
     }
   };
 

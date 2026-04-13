@@ -1,18 +1,12 @@
 import { z } from 'zod';
+import { TEAM_ROLES } from '../../types/team';
 
-export const teamRoleValues = [
-  'Designer',
-  'Content Creator',
-  'Marketing Manager',
-  'SEO Specialist',
-  'PPC Specialist',
-  'Social Media Manager',
-] as const;
+export const teamRoleValues = TEAM_ROLES;
 
 export const teamSchema = z.object({
   fullName: z.string().min(2, 'Full name is required'),
   email: z.string().email('Valid email is required'),
-  role: z.enum(teamRoleValues),
+  role: z.enum(TEAM_ROLES),
   availability: z.number().min(0).max(100),
   currentWorkload: z.number().min(0).max(100),
   skills: z.object({

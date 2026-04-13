@@ -6,18 +6,16 @@ function getRoleSkillMap(role: TeamMember['role']): SkillKey[] {
   switch (role) {
     case 'Designer':
       return ['design'];
-    case 'Content Creator':
-      return ['contentCreation', 'copywriting'];
-    case 'Marketing Manager':
-      return ['strategy', 'analytics'];
+    case 'Frontend Developer':
+      return ['react', 'typescript', 'css'];
+    case 'Backend Developer':
+      return ['nodejs', 'postgres'];
     case 'SEO Specialist':
       return ['seo', 'analytics'];
     case 'PPC Specialist':
       return ['ppcAdvertising', 'analytics'];
     case 'Social Media Manager':
       return ['socialMedia', 'contentCreation'];
-    default:
-      return [];
   }
 }
 

@@ -1,27 +1,33 @@
-export type TeamRole =
-  | 'Designer'
-  | 'Frontend Developer'
-  | 'Backend Developer'
-  | 'SEO Specialist'
-  | 'PPC Specialist'
-  | 'Social Media Manager';
+export const TEAM_ROLES = [
+  'Designer',
+  'Frontend Developer',
+  'Backend Developer',
+  'SEO Specialist',
+  'PPC Specialist',
+  'Social Media Manager',
+] as const;
 
-export interface Skills {
-  contentCreation: number;
-  socialMedia: number;
-  seo: number;
-  ppcAdvertising: number;
-  design: number;
-  copywriting: number;
-  analytics: number;
-  strategy: number;
-  react: number;
-  typescript: number;
-  css: number;
-  nodejs: number;
-  postgres: number;
-  jest: number;
-}
+export type TeamRole = (typeof TEAM_ROLES)[number];
+
+export const SKILL_KEYS = [
+  'contentCreation',
+  'socialMedia',
+  'seo',
+  'ppcAdvertising',
+  'design',
+  'copywriting',
+  'analytics',
+  'strategy',
+  'react',
+  'typescript',
+  'css',
+  'nodejs',
+  'postgres',
+  'jest',
+] as const;
+
+export type SkillKey = (typeof SKILL_KEYS)[number];
+export type Skills = Record<SkillKey, number>;
 
 export interface TeamMember {
   id: string;
@@ -32,5 +38,3 @@ export interface TeamMember {
   currentWorkload: number;
   skills: Skills;
 }
-
-export type SkillKey = keyof Skills;

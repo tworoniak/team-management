@@ -6,7 +6,9 @@ import { useTaskStore } from '../../stores/taskStore';
 export default function RecentActivityPanel() {
   const tasks = useTaskStore((state) => state.tasks);
 
-  const recentTasks = [...tasks].slice(0, 6);
+  const recentTasks = [...tasks]
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .slice(0, 6);
 
   return (
     <Card className='h-full p-5'>

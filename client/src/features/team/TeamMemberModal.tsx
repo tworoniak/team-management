@@ -107,7 +107,7 @@ export default function TeamMemberModal({
             min={0}
             max={100}
             error={errors.availability?.message}
-            {...register('availability')}
+            {...register('availability', { valueAsNumber: true })}
           />
 
           <NumberInput
@@ -115,7 +115,7 @@ export default function TeamMemberModal({
             min={0}
             max={100}
             error={errors.currentWorkload?.message}
-            {...register('currentWorkload')}
+            {...register('currentWorkload', { valueAsNumber: true })}
           />
         </div>
 
@@ -130,7 +130,7 @@ export default function TeamMemberModal({
               min={0}
               max={10}
               error={errors.skills?.contentCreation?.message}
-              {...register('skills.contentCreation')}
+              {...register('skills.contentCreation', { valueAsNumber: true })}
             />
 
             <NumberInput
@@ -138,7 +138,7 @@ export default function TeamMemberModal({
               min={0}
               max={10}
               error={errors.skills?.socialMedia?.message}
-              {...register('skills.socialMedia')}
+              {...register('skills.socialMedia', { valueAsNumber: true })}
             />
 
             <NumberInput
@@ -146,7 +146,7 @@ export default function TeamMemberModal({
               min={0}
               max={10}
               error={errors.skills?.seo?.message}
-              {...register('skills.seo')}
+              {...register('skills.seo', { valueAsNumber: true })}
             />
 
             <NumberInput
@@ -154,7 +154,7 @@ export default function TeamMemberModal({
               min={0}
               max={10}
               error={errors.skills?.ppcAdvertising?.message}
-              {...register('skills.ppcAdvertising')}
+              {...register('skills.ppcAdvertising', { valueAsNumber: true })}
             />
 
             <NumberInput
@@ -162,7 +162,7 @@ export default function TeamMemberModal({
               min={0}
               max={10}
               error={errors.skills?.design?.message}
-              {...register('skills.design')}
+              {...register('skills.design', { valueAsNumber: true })}
             />
 
             <NumberInput
@@ -170,7 +170,7 @@ export default function TeamMemberModal({
               min={0}
               max={10}
               error={errors.skills?.copywriting?.message}
-              {...register('skills.copywriting')}
+              {...register('skills.copywriting', { valueAsNumber: true })}
             />
 
             <NumberInput
@@ -178,7 +178,7 @@ export default function TeamMemberModal({
               min={0}
               max={10}
               error={errors.skills?.analytics?.message}
-              {...register('skills.analytics')}
+              {...register('skills.analytics', { valueAsNumber: true })}
             />
 
             <NumberInput
@@ -186,7 +186,7 @@ export default function TeamMemberModal({
               min={0}
               max={10}
               error={errors.skills?.strategy?.message}
-              {...register('skills.strategy')}
+              {...register('skills.strategy', { valueAsNumber: true })}
             />
           </div>
         </div>

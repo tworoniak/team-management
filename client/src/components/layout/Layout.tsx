@@ -14,11 +14,11 @@ import { useState } from 'react';
 import { cn } from '../../lib/utils';
 
 const navItems = [
-  { path: '/Dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { path: '/Tasks', label: 'Tasks', icon: CheckSquare },
-  //   { path: '/Projects', label: 'Projects', icon: FolderKanban },
-  { path: '/Team', label: 'Team', icon: Users },
-  //   { path: '/Sprints', label: 'Sprints', icon: Zap },
+  { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { path: '/tasks', label: 'Tasks', icon: CheckSquare },
+  //   { path: '/projects', label: 'Projects', icon: FolderKanban },
+  { path: '/team', label: 'Team', icon: Users },
+  //   { path: '/sprints', label: 'Sprints', icon: Zap },
   { path: '/allocation', label: 'AI Allocation', icon: Brain },
 ];
 

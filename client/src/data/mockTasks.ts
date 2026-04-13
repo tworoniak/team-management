@@ -12,6 +12,7 @@ export const mockTasks: Task[] = [
     dueDate: '2026-03-18',
     tags: ['ppc', 'social', 'analytics'],
     requiredSkills: ['ppcAdvertising', 'analytics'],
+    createdAt: '2026-04-08T09:00:00.000Z',
   },
   {
     id: '2',
@@ -23,6 +24,7 @@ export const mockTasks: Task[] = [
     dueDate: '2026-03-31',
     tags: ['design', 'copy', 'strategy'],
     requiredSkills: ['design', 'copywriting'],
+    createdAt: '2026-04-09T11:30:00.000Z',
   },
   {
     id: '3',
@@ -34,6 +36,7 @@ export const mockTasks: Task[] = [
     dueDate: '2026-03-14',
     tags: ['design', 'strategy'],
     requiredSkills: ['design', 'strategy'],
+    createdAt: '2026-04-07T14:00:00.000Z',
   },
   {
     id: '4',
@@ -45,6 +48,7 @@ export const mockTasks: Task[] = [
     dueDate: '2026-03-20',
     tags: ['seo', 'analytics', 'content'],
     requiredSkills: ['seo', 'analytics'],
+    createdAt: '2026-04-10T08:45:00.000Z',
   },
   {
     id: '5',
@@ -56,6 +60,7 @@ export const mockTasks: Task[] = [
     dueDate: '2026-02-14',
     tags: ['social', 'design', 'copy'],
     requiredSkills: ['socialMedia', 'copywriting'],
+    createdAt: '2026-04-06T10:00:00.000Z',
   },
   {
     id: '6',
@@ -67,5 +72,6 @@ export const mockTasks: Task[] = [
     dueDate: '2026-04-14',
     tags: ['content', 'strategy', 'design'],
     requiredSkills: ['contentCreation', 'strategy'],
+    createdAt: '2026-04-11T16:20:00.000Z',
   },
 ];

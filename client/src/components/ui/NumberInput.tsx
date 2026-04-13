@@ -1,5 +1,5 @@
 import type { InputHTMLAttributes } from 'react';
-import clsx from 'clsx';
+import { cn } from '../../lib/utils';
 
 type NumberInputProps = InputHTMLAttributes<HTMLInputElement> & {
   label: string;
@@ -17,7 +17,7 @@ export default function NumberInput({
       <span className='text-sm font-medium text-slate-200'>{label}</span>
       <input
         type='number'
-        className={clsx(
+        className={cn(
           'w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition placeholder:text-slate-500 focus:border-blue-500',
           className,
         )}

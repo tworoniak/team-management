@@ -8,6 +8,7 @@ import Select from '../../components/ui/Select';
 import Button from '../../components/ui/Button';
 import { taskSchema, type TaskFormValues } from './taskSchema';
 import type { Task } from '../../types/task';
+import { useTeamStore } from '../../stores/teamStore';
 
 type TaskModalProps = {
   isOpen: boolean;
@@ -31,14 +32,6 @@ const statusOptions = [
   { label: 'Completed', value: 'Completed' },
 ] as const;
 
-const assigneeOptions = [
-  { label: 'Yael Mizrahi', value: 'Yael Mizrahi' },
-  { label: 'Ariel Amador', value: 'Ariel Amador' },
-  { label: 'Sarah Johnson', value: 'Sarah Johnson' },
-  { label: 'Grayson Johnson', value: 'Grayson Johnson' },
-  { label: 'Unassigned', value: 'Unassigned' },
-] as const;
-
 function taskToFormValues(task?: Task | null): TaskFormValues {
   return {
     title: task?.title ?? '',
@@ -59,6 +52,12 @@ export default function CreateTaskModal({
   mode,
   initialTask,
 }: TaskModalProps) {
+  const team = useTeamStore((s) => s.team);
+  const assigneeOptions = [
+    { label: 'Unassigned', value: 'Unassigned' },
+    ...team.map((m) => ({ label: m.fullName, value: m.fullName })),
+  ];
+
   const {
     register,
     handleSubmit,
@@ -119,7 +118,7 @@ export default function CreateTaskModal({
         <div className='grid gap-4 md:grid-cols-2'>
           <Select
             label='Assign To'
-            options={[...assigneeOptions]}
+            options={assigneeOptions}
             error={errors.assignedTo?.message}
             {...register('assignedTo')}
           />

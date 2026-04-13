@@ -1,5 +1,5 @@
 import type { SelectHTMLAttributes } from 'react';
-import clsx from 'clsx';
+import { cn } from '../../lib/utils';
 
 type Option = {
   label: string;
@@ -23,8 +23,8 @@ export default function Select({
     <label className='block space-y-2'>
       <span className='text-sm font-medium text-slate-200'>{label}</span>
       <select
-        className={clsx(
-          'w-full rounded-xl border border-white/10 bg-[#10182f] px-4 py-3 text-white outline-none transition focus:border-blue-500',
+        className={cn(
+          'w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition focus:border-blue-500',
           className,
         )}
         {...props}
