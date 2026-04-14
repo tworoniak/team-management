@@ -1,21 +1,23 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 import Button from '../../components/ui/Button';
+import Spinner from '../../components/ui/Spinner';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
 import TeamMemberCard from '../../components/team/TeamMemberCard';
 import TeamMemberModal from './TeamMemberModal';
-import { useTeamStore } from '../../stores/teamStore';
+import { useTeam, useCreateMember, useUpdateMember, useDeleteMember } from '../../hooks/useTeam';
 import type { TeamMember } from '../../types/team';
 import type { TeamFormValues } from './teamSchema';
-import { mapFormValuesToMember } from '../../lib/transforms';
+import { mapFormValuesToMemberPayload } from '../../lib/transforms';
 
 export default function TeamPage() {
-  const { team, addMember, updateMember, deleteMember } = useTeamStore();
+  const { data: team = [], isLoading, isError } = useTeam();
+  const createMember = useCreateMember();
+  const updateMember = useUpdateMember();
+  const deleteMember = useDeleteMember();
 
   const [isMemberModalOpen, setIsMemberModalOpen] = useState(false);
-  const [memberModalMode, setMemberModalMode] = useState<'create' | 'edit'>(
-    'create',
-  );
+  const [memberModalMode, setMemberModalMode] = useState<'create' | 'edit'>('create');
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
   const [memberToDelete, setMemberToDelete] = useState<TeamMember | null>(null);
 
@@ -32,25 +34,54 @@ export default function TeamPage() {
   };
 
   const handleSubmitMember = (values: TeamFormValues) => {
+    const payload = mapFormValuesToMemberPayload(values, selectedMember);
+
     if (memberModalMode === 'create') {
-      addMember(mapFormValuesToMember(values));
-      toast.success(`${values.fullName} added to team`);
+      createMember.mutate(payload, {
+        onSuccess: () => toast.success(`${values.fullName} added to team`),
+        onError: () => toast.error('Failed to add member'),
+      });
       return;
     }
 
     if (selectedMember) {
-      updateMember(mapFormValuesToMember(values, selectedMember));
-      toast.success('Member updated');
+      updateMember.mutate(
+        { id: selectedMember.id, ...payload },
+        {
+          onSuccess: () => toast.success('Member updated'),
+          onError: () => toast.error('Failed to update member'),
+        },
+      );
     }
   };
 
   const handleDeleteMember = () => {
     if (!memberToDelete) return;
     const name = memberToDelete.fullName;
-    deleteMember(memberToDelete.id);
-    setMemberToDelete(null);
-    toast.success(`${name} removed from team`);
+    deleteMember.mutate(memberToDelete.id, {
+      onSuccess: () => {
+        setMemberToDelete(null);
+        toast.success(`${name} removed from team`);
+      },
+      onError: () => toast.error('Failed to delete member'),
+    });
   };
+
+  if (isLoading) {
+    return (
+      <div className='flex items-center justify-center py-24'>
+        <Spinner className='h-8 w-8' />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className='flex items-center justify-center py-24'>
+        <p className='text-slate-400'>Failed to load team. Is the server running?</p>
+      </div>
+    );
+  }
 
   return (
     <section className='space-y-8'>

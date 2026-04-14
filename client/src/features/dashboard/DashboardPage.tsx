@@ -7,8 +7,8 @@ import StatusDonutCard from '../../components/dashboard/StatusDonutCard';
 import PriorityOverviewCard from '../../components/dashboard/PriorityOverviewCard';
 import TeamWorkloadCard from '../../components/dashboard/TeamWorkloadCard';
 
-import { useTaskStore } from '../../stores/taskStore';
-import { useTeamStore } from '../../stores/teamStore';
+import { useTasks } from '../../hooks/useTasks';
+import { useTeam } from '../../hooks/useTeam';
 
 import {
   getActiveTasks,
@@ -19,8 +19,8 @@ import {
 } from '../../lib/dashboardAnalytics';
 
 export default function DashboardPage() {
-  const tasks = useTaskStore((state) => state.tasks);
-  const team = useTeamStore((state) => state.team);
+  const { data: tasks = [] } = useTasks();
+  const { data: team = [] } = useTeam();
 
   const activeTasks = useMemo(() => getActiveTasks(tasks), [tasks]);
   const highPriority = useMemo(() => getHighPriorityTasks(tasks), [tasks]);
@@ -33,7 +33,7 @@ export default function DashboardPage() {
       <div>
         <h1 className='text-5xl font-bold text-white'>Development Dashboard</h1>
         <p className='mt-3 text-lg text-slate-400'>
-          Welcome back. Here’s your team’s performance snapshot.
+          Welcome back. Here's your team's performance snapshot.
         </p>
       </div>
 

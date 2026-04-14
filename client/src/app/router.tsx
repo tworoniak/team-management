@@ -1,5 +1,13 @@
 import { createBrowserRouter, Navigate, Link } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
+import ProtectedRoute from '../components/layout/ProtectedRoute';
+import LoginPage from '../features/auth/LoginPage';
+import DashboardPage from '../features/dashboard/DashboardPage';
+import TeamPage from '../features/team/TeamPage';
+import TasksPage from '../features/tasks/TasksPage';
+import AllocationPage from '../features/allocation/AllocationPage';
+import KanbanPage from '../features/kanban/KanbanPage';
+import ProjectsPage from '../features/projects/ProjectsPage';
 
 function NotFoundPage() {
   return (
@@ -16,17 +24,16 @@ function NotFoundPage() {
     </div>
   );
 }
-import DashboardPage from '../features/dashboard/DashboardPage';
-import TeamPage from '../features/team/TeamPage';
-import TasksPage from '../features/tasks/TasksPage';
-import AllocationPage from '../features/allocation/AllocationPage';
-import KanbanPage from '../features/kanban/KanbanPage';
-import ProjectsPage from '../features/projects/ProjectsPage';
 
 export const router = createBrowserRouter([
+  { path: '/login', element: <LoginPage /> },
   {
     path: '/',
-    element: <Layout />,
+    element: (
+      <ProtectedRoute>
+        <Layout />
+      </ProtectedRoute>
+    ),
     children: [
       { index: true, element: <Navigate to='/dashboard' /> },
       { path: 'dashboard', element: <DashboardPage /> },

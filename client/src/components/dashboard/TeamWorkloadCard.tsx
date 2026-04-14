@@ -1,8 +1,8 @@
 import Card from '../ui/Card';
-import { useTeamStore } from '../../stores/teamStore';
+import { useTeam } from '../../hooks/useTeam';
 
 export default function TeamWorkloadCard() {
-  const team = useTeamStore((state) => state.team);
+  const { data: team = [] } = useTeam();
 
   return (
     <Card className='p-5'>
