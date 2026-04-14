@@ -1,11 +1,11 @@
 import { Outlet, NavLink } from 'react-router-dom';
 import { Toaster } from 'sonner';
-// , useLocation
 import {
   LayoutDashboard,
   CheckSquare,
   Users,
-  //   FolderKanban,
+  FolderKanban,
+  Kanban,
   Zap,
   Menu,
   X,
@@ -17,9 +17,9 @@ import { cn } from '../../lib/utils';
 const navItems = [
   { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { path: '/tasks', label: 'Tasks', icon: CheckSquare },
-  //   { path: '/projects', label: 'Projects', icon: FolderKanban },
+  { path: '/kanban', label: 'Kanban', icon: Kanban },
+  { path: '/projects', label: 'Projects', icon: FolderKanban },
   { path: '/team', label: 'Team', icon: Users },
-  //   { path: '/sprints', label: 'Sprints', icon: Zap },
   { path: '/allocation', label: 'AI Allocation', icon: Brain },
 ];
 

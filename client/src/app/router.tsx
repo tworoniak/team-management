@@ -20,6 +20,8 @@ import DashboardPage from '../features/dashboard/DashboardPage';
 import TeamPage from '../features/team/TeamPage';
 import TasksPage from '../features/tasks/TasksPage';
 import AllocationPage from '../features/allocation/AllocationPage';
+import KanbanPage from '../features/kanban/KanbanPage';
+import ProjectsPage from '../features/projects/ProjectsPage';
 
 export const router = createBrowserRouter([
   {
@@ -28,8 +30,10 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Navigate to='/dashboard' /> },
       { path: 'dashboard', element: <DashboardPage /> },
-      { path: 'team', element: <TeamPage /> },
       { path: 'tasks', element: <TasksPage /> },
+      { path: 'kanban', element: <KanbanPage /> },
+      { path: 'projects', element: <ProjectsPage /> },
+      { path: 'team', element: <TeamPage /> },
       { path: 'allocation', element: <AllocationPage /> },
     ],
   },
