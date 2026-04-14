@@ -40,12 +40,20 @@ const COLUMNS: { status: TaskStatus; label: string; headerClass: string }[] = [
 
 const today = new Date().toISOString().split('T')[0];
 
-function KanbanCard({ task, overlay = false }: { task: Task; overlay?: boolean }) {
-  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
-    id: task.id,
-  });
+function KanbanCard({
+  task,
+  overlay = false,
+}: {
+  task: Task;
+  overlay?: boolean;
+}) {
+  const { attributes, listeners, setNodeRef, transform, isDragging } =
+    useDraggable({
+      id: task.id,
+    });
 
-  const isOverdue = task.status !== 'Completed' && !!task.dueDate && task.dueDate < today;
+  const isOverdue =
+    task.status !== 'Completed' && !!task.dueDate && task.dueDate < today;
 
   const style = transform
     ? { transform: `translate3d(${transform.x}px, ${transform.y}px, 0)` }
@@ -59,13 +67,16 @@ function KanbanCard({ task, overlay = false }: { task: Task; overlay?: boolean }
         'rounded-xl border border-white/10 bg-[#0d1630] p-4 shadow-md cursor-grab active:cursor-grabbing select-none',
         isOverdue && 'border-red-500/40',
         isDragging && !overlay && 'opacity-25',
-        overlay && 'rotate-1 shadow-2xl cursor-grabbing ring-2 ring-indigo-500/50',
+        overlay &&
+          'rotate-1 shadow-2xl cursor-grabbing ring-2 ring-indigo-500/50',
       )}
       {...attributes}
       {...listeners}
     >
       <div className='mb-2.5 flex items-start justify-between gap-2'>
-        <p className='text-sm font-semibold text-white leading-snug'>{task.title}</p>
+        <p className='text-sm font-semibold text-white leading-snug'>
+          {task.title}
+        </p>
         <GripVertical className='w-4 h-4 text-slate-600 shrink-0 mt-0.5' />
       </div>
 
@@ -79,10 +90,17 @@ function KanbanCard({ task, overlay = false }: { task: Task; overlay?: boolean }
         )}
       </div>
 
-      <p className='text-xs text-slate-500 truncate'>{task.assignedTo ?? 'Unassigned'}</p>
+      <p className='text-xs text-slate-500 truncate'>
+        {task.assignedTo ?? 'Unassigned'}
+      </p>
 
       {task.dueDate && (
-        <p className={cn('mt-1 text-xs', isOverdue ? 'text-red-400' : 'text-slate-600')}>
+        <p
+          className={cn(
+            'mt-1 text-xs',
+            isOverdue ? 'text-red-400' : 'text-slate-600',
+          )}
+        >
           Due {task.dueDate}
         </p>
       )}
@@ -127,7 +145,9 @@ function KanbanColumn({
         )}
       >
         {tasks.length === 0 ? (
-          <p className='mt-6 text-center text-sm text-slate-700'>Drop tasks here</p>
+          <p className='mt-6 text-center text-sm text-slate-700'>
+            Drop tasks here
+          </p>
         ) : (
           tasks.map((task) => <KanbanCard key={task.id} task={task} />)
         )}
@@ -164,7 +184,9 @@ export default function KanbanPage() {
   return (
     <section className='space-y-6'>
       <div>
-        <h1 className='text-5xl font-bold tracking-tight text-white'>Kanban Board</h1>
+        <h1 className='text-5xl font-bold tracking-tight text-white'>
+          Kanban Board
+        </h1>
         <p className='mt-3 text-lg text-slate-400'>
           Drag tasks between columns to update their status.
         </p>
