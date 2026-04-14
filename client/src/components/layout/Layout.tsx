@@ -1,4 +1,5 @@
 import { Outlet, NavLink } from 'react-router-dom';
+import { Toaster } from 'sonner';
 // , useLocation
 import {
   LayoutDashboard,
@@ -111,6 +112,7 @@ export default function Layout() {
           <Outlet />
         </main>
       </div>
+      <Toaster theme='dark' position='bottom-right' richColors />
     </div>
   );
 }

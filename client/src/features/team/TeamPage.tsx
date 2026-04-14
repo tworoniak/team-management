@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { toast } from 'sonner';
 import Button from '../../components/ui/Button';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
 import TeamMemberCard from '../../components/team/TeamMemberCard';
@@ -33,18 +34,22 @@ export default function TeamPage() {
   const handleSubmitMember = (values: TeamFormValues) => {
     if (memberModalMode === 'create') {
       addMember(mapFormValuesToMember(values));
+      toast.success(`${values.fullName} added to team`);
       return;
     }
 
     if (selectedMember) {
       updateMember(mapFormValuesToMember(values, selectedMember));
+      toast.success('Member updated');
     }
   };
 
   const handleDeleteMember = () => {
     if (!memberToDelete) return;
+    const name = memberToDelete.fullName;
     deleteMember(memberToDelete.id);
     setMemberToDelete(null);
+    toast.success(`${name} removed from team`);
   };
 
   return (
