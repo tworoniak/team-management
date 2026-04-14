@@ -1,10 +1,10 @@
 import Card from '../ui/Card';
 import Badge from '../ui/Badge';
 import { priorityTone, statusTone } from '../../lib/utils';
-import { useTaskStore } from '../../stores/taskStore';
+import { useTasks } from '../../hooks/useTasks';
 
 export default function RecentActivityPanel() {
-  const tasks = useTaskStore((state) => state.tasks);
+  const { data: tasks = [] } = useTasks();
 
   const recentTasks = [...tasks]
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())

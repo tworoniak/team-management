@@ -3,12 +3,13 @@ import { toast } from 'sonner';
 import { Search } from 'lucide-react';
 import TaskCard from '../../components/tasks/TaskCard';
 import Button from '../../components/ui/Button';
+import Spinner from '../../components/ui/Spinner';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
 import type { Task, TaskStatus } from '../../types/task';
 import CreateTaskModal from './CreateTaskModal';
 import type { TaskFormValues } from './taskSchema';
-import { useTaskStore } from '../../stores/taskStore';
-import { mapFormValuesToTask } from '../../lib/transforms';
+import { useTasks, useCreateTask, useUpdateTask, useDeleteTask } from '../../hooks/useTasks';
+import { mapFormValuesToTaskPayload } from '../../lib/transforms';
 
 const filterTabs: { label: string; value: 'All' | TaskStatus }[] = [
   { label: 'All Tasks', value: 'All' },
@@ -19,7 +20,10 @@ const filterTabs: { label: string; value: 'All' | TaskStatus }[] = [
 ];
 
 export default function TasksPage() {
-  const { tasks, addTask, updateTask, deleteTask } = useTaskStore();
+  const { data: tasks = [], isLoading, isError } = useTasks();
+  const createTask = useCreateTask();
+  const updateTask = useUpdateTask();
+  const deleteTask = useDeleteTask();
 
   const [activeFilter, setActiveFilter] = useState<'All' | TaskStatus>('All');
   const [searchQuery, setSearchQuery] = useState('');
@@ -78,27 +82,56 @@ export default function TasksPage() {
   };
 
   const handleSubmitTask = (values: TaskFormValues) => {
+    const payload = mapFormValuesToTaskPayload(values);
+
     if (taskModalMode === 'create') {
-      addTask(mapFormValuesToTask(values));
-      toast.success('Task created');
+      createTask.mutate(payload, {
+        onSuccess: () => toast.success('Task created'),
+        onError: () => toast.error('Failed to create task'),
+      });
       return;
     }
 
     if (selectedTask) {
-      updateTask(mapFormValuesToTask(values, selectedTask));
-      toast.success('Task updated');
+      updateTask.mutate(
+        { id: selectedTask.id, ...payload },
+        {
+          onSuccess: () => toast.success('Task updated'),
+          onError: () => toast.error('Failed to update task'),
+        },
+      );
     }
   };
 
   const handleDeleteTask = () => {
     if (!taskToDelete) return;
     const title = taskToDelete.title;
-    deleteTask(taskToDelete.id);
-    setTaskToDelete(null);
-    toast.success(`"${title}" deleted`);
+    deleteTask.mutate(taskToDelete.id, {
+      onSuccess: () => {
+        setTaskToDelete(null);
+        toast.success(`"${title}" deleted`);
+      },
+      onError: () => toast.error('Failed to delete task'),
+    });
   };
 
   const hasActiveSearch = searchQuery.trim().length > 0;
+
+  if (isLoading) {
+    return (
+      <div className='flex items-center justify-center py-24'>
+        <Spinner className='h-8 w-8' />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className='flex items-center justify-center py-24'>
+        <p className='text-slate-400'>Failed to load tasks. Is the server running?</p>
+      </div>
+    );
+  }
 
   return (
     <section className='space-y-8'>

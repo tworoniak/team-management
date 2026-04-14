@@ -10,7 +10,8 @@ import {
 import { toast } from 'sonner';
 import { AlertTriangle, GripVertical } from 'lucide-react';
 
-import { useTaskStore } from '../../stores/taskStore';
+import { useTasks, useUpdateTask } from '../../hooks/useTasks';
+import Spinner from '../../components/ui/Spinner';
 import type { Task, TaskStatus } from '../../types/task';
 import Badge from '../../components/ui/Badge';
 import { cn, priorityTone } from '../../lib/utils';
@@ -53,7 +54,7 @@ function KanbanCard({
     });
 
   const isOverdue =
-    task.status !== 'Completed' && !!task.dueDate && task.dueDate < today;
+    task.status !== 'Completed' && !!task.dueDate && task.dueDate < today!;
 
   const style = transform
     ? { transform: `translate3d(${transform.x}px, ${transform.y}px, 0)` }
@@ -157,8 +158,8 @@ function KanbanColumn({
 }
 
 export default function KanbanPage() {
-  const tasks = useTaskStore((state) => state.tasks);
-  const updateTask = useTaskStore((state) => state.updateTask);
+  const { data: tasks = [], isLoading } = useTasks();
+  const updateTask = useUpdateTask();
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
   const handleDragStart = (event: DragStartEvent) => {
@@ -175,11 +176,22 @@ export default function KanbanPage() {
     const task = tasks.find((t) => t.id === String(active.id));
     if (!task || task.status === newStatus) return;
 
-    updateTask({ ...task, status: newStatus });
+    updateTask.mutate(
+      { id: task.id, status: newStatus },
+      { onError: () => toast.error('Failed to update task status') },
+    );
     toast.success(`Moved "${task.title}" to ${newStatus}`);
   };
 
   const handleDragCancel = () => setActiveTask(null);
+
+  if (isLoading) {
+    return (
+      <div className='flex items-center justify-center py-24'>
+        <Spinner className='h-8 w-8' />
+      </div>
+    );
+  }
 
   return (
     <section className='space-y-6'>

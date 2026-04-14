@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { FolderKanban, Plus, Pencil, Trash2, CheckSquare, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { useProjectStore } from '../../stores/projectStore';
-import { useTaskStore } from '../../stores/taskStore';
+import { useProjects, useCreateProject, useUpdateProject, useDeleteProject } from '../../hooks/useProjects';
+import { useTasks } from '../../hooks/useTasks';
+import Spinner from '../../components/ui/Spinner';
 import type { Project, ProjectColorValue } from '../../types/project';
 import { PROJECT_COLORS } from '../../types/project';
 import type { ProjectFormValues } from './projectSchema';
@@ -110,34 +111,46 @@ function ProjectCard({
 }
 
 export default function ProjectsPage() {
-  const { projects, addProject, updateProject, deleteProject } = useProjectStore();
-  const tasks = useTaskStore((state) => state.tasks);
+  const { data: projects = [], isLoading, isError } = useProjects();
+  const { data: tasks = [] } = useTasks();
+  const createProject = useCreateProject();
+  const updateProject = useUpdateProject();
+  const deleteProject = useDeleteProject();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<Project | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Project | null>(null);
 
   const handleCreate = (values: ProjectFormValues) => {
-    addProject({
-      id: crypto.randomUUID(),
-      ...values,
-      createdAt: new Date().toISOString().split('T')[0],
+    createProject.mutate(values, {
+      onSuccess: () => toast.success(`Project "${values.name}" created`),
+      onError: () => toast.error('Failed to create project'),
     });
-    toast.success(`Project "${values.name}" created`);
   };
 
   const handleEdit = (values: ProjectFormValues) => {
     if (!editTarget) return;
-    updateProject({ ...editTarget, ...values });
-    toast.success(`Project "${values.name}" updated`);
-    setEditTarget(null);
+    updateProject.mutate(
+      { id: editTarget.id, ...values },
+      {
+        onSuccess: () => {
+          toast.success(`Project "${values.name}" updated`);
+          setEditTarget(null);
+        },
+        onError: () => toast.error('Failed to update project'),
+      },
+    );
   };
 
   const handleDelete = () => {
     if (!deleteTarget) return;
-    deleteProject(deleteTarget.id);
-    toast.success(`Project "${deleteTarget.name}" deleted`);
-    setDeleteTarget(null);
+    deleteProject.mutate(deleteTarget.id, {
+      onSuccess: () => {
+        toast.success(`Project "${deleteTarget.name}" deleted`);
+        setDeleteTarget(null);
+      },
+      onError: () => toast.error('Failed to delete project'),
+    });
   };
 
   const openEdit = (project: Project) => {
@@ -149,6 +162,22 @@ export default function ProjectsPage() {
     setModalOpen(false);
     setEditTarget(null);
   };
+
+  if (isLoading) {
+    return (
+      <div className='flex items-center justify-center py-24'>
+        <Spinner className='h-8 w-8' />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className='flex items-center justify-center py-24'>
+        <p className='text-slate-400'>Failed to load projects. Is the server running?</p>
+      </div>
+    );
+  }
 
   return (
     <section className='space-y-8'>

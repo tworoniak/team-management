@@ -5,14 +5,15 @@ import { toast } from 'sonner';
 import StatCard from '../../components/ui/StatCard';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
-import { useTaskStore } from '../../stores/taskStore';
-import { useTeamStore } from '../../stores/teamStore';
+import Spinner from '../../components/ui/Spinner';
+import { useTasks, useUpdateTask } from '../../hooks/useTasks';
+import { useTeam } from '../../hooks/useTeam';
 import { generateAllocationResults } from '../../lib/allocationEngine';
 
 export default function AllocationPage() {
-  const tasks = useTaskStore((state) => state.tasks);
-  const updateTask = useTaskStore((state) => state.updateTask);
-  const team = useTeamStore((state) => state.team);
+  const { data: tasks = [], isLoading: tasksLoading } = useTasks();
+  const { data: team = [], isLoading: teamLoading } = useTeam();
+  const updateTask = useUpdateTask();
 
   const results = useMemo(
     () => generateAllocationResults(tasks, team),
@@ -33,20 +34,25 @@ export default function AllocationPage() {
     results.forEach(({ task, recommendations }) => {
       const top = recommendations[0];
       if (!top) return;
-      updateTask({ ...task, assignedTo: top.member.fullName });
+      updateTask.mutate({ id: task.id, assignedTo: top.member.fullName });
     });
     toast.success(`Assigned ${results.length} task${results.length !== 1 ? 's' : ''} to best matches`);
   };
 
   const handleApplyRecommendation = (taskId: string, memberName: string) => {
-    const task = tasks.find((item) => item.id === taskId);
-    if (!task) return;
-
-    updateTask({
-      ...task,
-      assignedTo: memberName,
-    });
+    updateTask.mutate(
+      { id: taskId, assignedTo: memberName },
+      { onError: () => toast.error('Failed to assign task') },
+    );
   };
+
+  if (tasksLoading || teamLoading) {
+    return (
+      <div className='flex items-center justify-center py-24'>
+        <Spinner className='h-8 w-8' />
+      </div>
+    );
+  }
 
   return (
     <section className='space-y-8'>

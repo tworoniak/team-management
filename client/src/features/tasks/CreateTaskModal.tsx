@@ -8,7 +8,7 @@ import Select from '../../components/ui/Select';
 import Button from '../../components/ui/Button';
 import { taskSchema, type TaskFormValues } from './taskSchema';
 import type { Task } from '../../types/task';
-import { useTeamStore } from '../../stores/teamStore';
+import { useTeam } from '../../hooks/useTeam';
 
 type TaskModalProps = {
   isOpen: boolean;
@@ -52,7 +52,7 @@ export default function CreateTaskModal({
   mode,
   initialTask,
 }: TaskModalProps) {
-  const team = useTeamStore((s) => s.team);
+  const { data: team = [] } = useTeam();
   const assigneeOptions = [
     { label: 'Unassigned', value: 'Unassigned' },
     ...team.map((m) => ({ label: m.fullName, value: m.fullName })),

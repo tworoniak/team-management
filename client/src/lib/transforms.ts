@@ -1,47 +1,32 @@
-import type { Task } from '../types/task';
 import type { TeamMember, SkillKey } from '../types/team';
 import { SKILL_KEYS } from '../types/team';
 import type { TaskFormValues } from '../features/tasks/taskSchema';
 import type { TeamFormValues } from '../features/team/teamSchema';
+import type { TaskCreatePayload } from '../hooks/useTasks';
+import type { MemberCreatePayload } from '../hooks/useTeam';
 
-export function mapFormValuesToTask(
-  values: TaskFormValues,
-  existingTask?: Task | null,
-): Task {
-  const parsedTags =
-    values.tags
-      ?.split(',')
-      .map((t) => t.trim())
-      .filter(Boolean) ?? [];
-
-  const parsedSkills =
-    values.requiredSkills
-      ?.split(',')
-      .map((s) => s.trim())
-      .filter((s): s is SkillKey =>
-        (SKILL_KEYS as readonly string[]).includes(s),
-      ) ?? [];
-
+export function mapFormValuesToTaskPayload(values: TaskFormValues): TaskCreatePayload {
   return {
-    id: existingTask?.id ?? crypto.randomUUID(),
     title: values.title,
     description: values.description,
     priority: values.priority,
     status: values.status,
     assignedTo: values.assignedTo,
     dueDate: values.dueDate,
-    tags: parsedTags,
-    requiredSkills: parsedSkills,
-    createdAt: existingTask?.createdAt ?? new Date().toISOString(),
+    tags: values.tags?.split(',').map((t) => t.trim()).filter(Boolean) ?? [],
+    requiredSkills:
+      values.requiredSkills
+        ?.split(',')
+        .map((s) => s.trim())
+        .filter((s): s is SkillKey => (SKILL_KEYS as readonly string[]).includes(s)) ?? [],
   };
 }
 
-export function mapFormValuesToMember(
+export function mapFormValuesToMemberPayload(
   values: TeamFormValues,
   existingMember?: TeamMember | null,
-): TeamMember {
+): MemberCreatePayload {
   return {
-    id: existingMember?.id ?? crypto.randomUUID(),
     fullName: values.fullName,
     email: values.email,
     role: values.role,
@@ -56,7 +41,6 @@ export function mapFormValuesToMember(
       copywriting: values.skills.copywriting,
       analytics: values.skills.analytics,
       strategy: values.skills.strategy,
-      // Tech skills: preserve existing values when editing, default 0 on create
       react: existingMember?.skills.react ?? 0,
       typescript: existingMember?.skills.typescript ?? 0,
       css: existingMember?.skills.css ?? 0,
