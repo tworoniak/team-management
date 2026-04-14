@@ -14,4 +14,5 @@ export interface Task {
   tags: string[];
   requiredSkills: SkillKey[];
   createdAt: string;
+  projectId?: string;
 }

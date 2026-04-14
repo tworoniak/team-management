@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
-import { BrainCircuit, CheckSquare, Users } from 'lucide-react';
+import { BrainCircuit, CheckSquare, Users, Wand2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 import StatCard from '../../components/ui/StatCard';
 import Card from '../../components/ui/Card';
@@ -28,6 +29,15 @@ export default function AllocationPage() {
     [tasks],
   );
 
+  const handleApplyAll = () => {
+    results.forEach(({ task, recommendations }) => {
+      const top = recommendations[0];
+      if (!top) return;
+      updateTask({ ...task, assignedTo: top.member.fullName });
+    });
+    toast.success(`Assigned ${results.length} task${results.length !== 1 ? 's' : ''} to best matches`);
+  };
+
   const handleApplyRecommendation = (taskId: string, memberName: string) => {
     const task = tasks.find((item) => item.id === taskId);
     if (!task) return;
@@ -40,14 +50,26 @@ export default function AllocationPage() {
 
   return (
     <section className='space-y-8'>
-      <div>
-        <h1 className='text-5xl font-bold tracking-tight text-white'>
-          AI Task Allocation Engine
-        </h1>
-        <p className='mt-3 text-lg text-slate-400'>
-          Recommend the best assignee based on skills, availability, and
-          workload.
-        </p>
+      <div className='flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between'>
+        <div>
+          <h1 className='text-5xl font-bold tracking-tight text-white'>
+            AI Task Allocation Engine
+          </h1>
+          <p className='mt-3 text-lg text-slate-400'>
+            Recommend the best assignee based on skills, availability, and
+            workload.
+          </p>
+        </div>
+        {results.length > 0 && (
+          <Button
+            type='button'
+            className='shrink-0 flex items-center gap-2'
+            onClick={handleApplyAll}
+          >
+            <Wand2 className='w-4 h-4' />
+            Apply All Best Matches
+          </Button>
+        )}
       </div>
 
       <div className='grid gap-4 md:grid-cols-3'>
