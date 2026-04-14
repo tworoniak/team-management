@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { toast } from 'sonner';
 import { Search } from 'lucide-react';
 import TaskCard from '../../components/tasks/TaskCard';
 import Button from '../../components/ui/Button';
@@ -79,18 +80,22 @@ export default function TasksPage() {
   const handleSubmitTask = (values: TaskFormValues) => {
     if (taskModalMode === 'create') {
       addTask(mapFormValuesToTask(values));
+      toast.success('Task created');
       return;
     }
 
     if (selectedTask) {
       updateTask(mapFormValuesToTask(values, selectedTask));
+      toast.success('Task updated');
     }
   };
 
   const handleDeleteTask = () => {
     if (!taskToDelete) return;
+    const title = taskToDelete.title;
     deleteTask(taskToDelete.id);
     setTaskToDelete(null);
+    toast.success(`"${title}" deleted`);
   };
 
   const hasActiveSearch = searchQuery.trim().length > 0;

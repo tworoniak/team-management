@@ -2,12 +2,20 @@ import Card from '../ui/Card';
 import {
   BarChart,
   Bar,
+  Cell,
   CartesianGrid,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from 'recharts';
+
+const PRIORITY_COLORS: Record<string, string> = {
+  Low: '#22d3ee',
+  Medium: '#4f8cff',
+  High: '#f59e0b',
+  Critical: '#ef4444',
+};
 
 type PriorityOverviewCardProps = {
   data: { name: string; value: number }[];
@@ -45,12 +53,14 @@ export default function PriorityOverviewCard({
               }}
               cursor={{ fill: 'transparent' }}
             />
-            <Bar
-              dataKey='value'
-              fill='#4f8cff'
-              barSize='40'
-              //radius={[0, 8, 8, 0]}
-            />
+            <Bar dataKey='value' barSize={40}>
+              {data.map((entry) => (
+                <Cell
+                  key={entry.name}
+                  fill={PRIORITY_COLORS[entry.name] ?? '#4f8cff'}
+                />
+              ))}
+            </Bar>
           </BarChart>
         </ResponsiveContainer>
       </div>
