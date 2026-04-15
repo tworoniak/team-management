@@ -79,7 +79,7 @@ export default function Modal({
         role='dialog'
         aria-modal='true'
         aria-labelledby={title ? titleId : undefined}
-        className='max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-white/10 bg-[#0d1630] shadow-2xl'
+        className='max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-white/10 bg-card shadow-2xl'
         onClick={(e) => e.stopPropagation()}
       >
         <div className='flex items-center justify-between border-b border-white/10 px-5 py-4'>

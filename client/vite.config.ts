@@ -10,6 +10,6 @@ export default defineConfig({
     strictPort: true,
   },
   test: {
-    environment: 'node',
+    environment: 'jsdom',
   },
 });

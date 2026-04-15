@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Pencil, Trash2, AlertTriangle } from 'lucide-react';
 import type { Task } from '../../types/task';
 import Card from '../ui/Card';
@@ -11,9 +12,8 @@ type TaskCardProps = {
   onDelete?: (task: Task) => void;
 };
 
-const today = new Date().toISOString().split('T')[0];
-
 export default function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
+  const today = useMemo(() => new Date().toISOString().split('T')[0], []);
   const isOverdue =
     task.status !== 'Completed' && !!task.dueDate && task.dueDate < today;
 
