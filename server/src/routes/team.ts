@@ -26,15 +26,19 @@ const teamMemberSchema = z.object({
 const updateTeamMemberSchema = teamMemberSchema.partial();
 
 // GET /api/team
-router.get('/', async (_req, res) => {
-  const members = await prisma.teamMember.findMany({ orderBy: { fullName: 'asc' } });
+router.get('/', async (req, res) => {
+  const members = await prisma.teamMember.findMany({
+    where: { userId: req.userId },
+    orderBy: { fullName: 'asc' },
+  });
   res.json(members);
 });
 
 // GET /api/team/:id
 router.get('/:id', async (req, res) => {
-  const id = req.params['id'] as string;
-  const member = await prisma.teamMember.findUnique({ where: { id } });
+  const member = await prisma.teamMember.findFirst({
+    where: { id: req.params['id'] as string, userId: req.userId },
+  });
   if (!member) { res.status(404).json({ error: 'Team member not found' }); return; }
   res.json(member);
 });
@@ -42,7 +46,7 @@ router.get('/:id', async (req, res) => {
 // POST /api/team
 router.post('/', validate(teamMemberSchema), async (req, res) => {
   const data = req.body as z.infer<typeof teamMemberSchema>;
-  const member = await prisma.teamMember.create({ data });
+  const member = await prisma.teamMember.create({ data: { ...data, userId: req.userId } });
   res.status(201).json(member);
 });
 
@@ -50,6 +54,8 @@ router.post('/', validate(teamMemberSchema), async (req, res) => {
 router.patch('/:id', validate(updateTeamMemberSchema), async (req, res) => {
   const id = req.params['id'] as string;
   const data = req.body as z.infer<typeof updateTeamMemberSchema>;
+  const existing = await prisma.teamMember.findFirst({ where: { id, userId: req.userId } });
+  if (!existing) { res.status(404).json({ error: 'Team member not found' }); return; }
   const member = await prisma.teamMember.update({ where: { id }, data });
   res.json(member);
 });
@@ -57,7 +63,8 @@ router.patch('/:id', validate(updateTeamMemberSchema), async (req, res) => {
 // DELETE /api/team/:id
 router.delete('/:id', async (req, res) => {
   const id = req.params['id'] as string;
-  await prisma.teamMember.delete({ where: { id } });
+  const deleted = await prisma.teamMember.deleteMany({ where: { id, userId: req.userId } });
+  if (deleted.count === 0) { res.status(404).json({ error: 'Team member not found' }); return; }
   res.status(204).send();
 });
 

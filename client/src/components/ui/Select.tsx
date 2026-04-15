@@ -24,13 +24,13 @@ export default function Select({
       <span className='text-sm font-medium text-slate-200'>{label}</span>
       <select
         className={cn(
-          'w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition focus:border-blue-500',
+          'w-full rounded-xl border border-white/10 bg-card px-4 py-3 text-white outline-none transition focus:border-blue-500',
           className,
         )}
         {...props}
       >
         {options.map((option) => (
-          <option key={option.value} value={option.value}>
+          <option key={option.value} value={option.value} className='bg-card'>
             {option.label}
           </option>
         ))}
