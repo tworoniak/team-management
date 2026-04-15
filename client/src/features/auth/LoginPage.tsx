@@ -10,6 +10,7 @@ import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
 
 const authSchema = z.object({
+  name: z.string().optional(),
   email: z.string().email('Valid email required'),
   password: z.string().min(8, 'At least 8 characters'),
 });
@@ -18,7 +19,7 @@ type AuthFormValues = z.infer<typeof authSchema>;
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const setToken = useAuthStore((s) => s.setToken);
+  const setAuth = useAuthStore((s) => s.setAuth);
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [serverError, setServerError] = useState('');
 
@@ -30,17 +31,20 @@ export default function LoginPage() {
 
   const onSubmit = async (values: AuthFormValues) => {
     setServerError('');
+    if (mode === 'register' && !values.name?.trim()) {
+      setServerError('Name is required.');
+      return;
+    }
     try {
       const endpoint = mode === 'login' ? '/auth/login' : '/auth/register';
-      const { data } = await api.post<{ token: string }>(endpoint, values);
-      setToken(data.token);
+      const { data } = await api.post<{ token: string; user: { id: string; name: string; email: string } }>(endpoint, values);
+      setAuth(data.token, data.user);
       navigate('/dashboard', { replace: true });
     } catch (err: unknown) {
       const message =
-        typeof err === 'object' &&
-        err !== null &&
-        'response' in err
-          ? (err as { response?: { data?: { error?: string } } }).response?.data?.error
+        typeof err === 'object' && err !== null && 'response' in err
+          ? (err as { response?: { data?: { error?: string } } }).response?.data
+              ?.error
           : undefined;
       setServerError(message ?? 'Something went wrong. Please try again.');
     }
@@ -75,6 +79,14 @@ export default function LoginPage() {
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
+            {mode === 'register' && (
+              <Input
+                label='Name'
+                type='text'
+                placeholder='Your name'
+                {...register('name')}
+              />
+            )}
             <Input
               label='Email'
               type='email'
