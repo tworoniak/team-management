@@ -1,5 +1,7 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { Toaster } from 'sonner';
+import ScrollToTop from '../ui/ScrollToTop';
+import ScrollToTopButton from '../ui/ScrollToTopButton';
 import {
   LayoutDashboard,
   CheckSquare,
@@ -170,6 +172,8 @@ export default function Layout() {
           <Outlet />
         </main>
       </div>
+      <ScrollToTop />
+      <ScrollToTopButton />
       <Toaster theme='dark' position='bottom-right' richColors />
     </div>
   );

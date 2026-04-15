@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import Card from '../ui/Card';
 import Badge from '../ui/Badge';
 import { priorityTone, statusTone } from '../../lib/utils';
@@ -6,9 +7,13 @@ import { useTasks } from '../../hooks/useTasks';
 export default function RecentActivityPanel() {
   const { data: tasks = [] } = useTasks();
 
-  const recentTasks = [...tasks]
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-    .slice(0, 6);
+  const recentTasks = useMemo(
+    () =>
+      [...tasks]
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        .slice(0, 6),
+    [tasks],
+  );
 
   return (
     <Card className='h-full p-5'>

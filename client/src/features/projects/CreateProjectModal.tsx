@@ -98,6 +98,8 @@ export default function CreateProjectModal({
                 key={value}
                 type='button'
                 title={label}
+                aria-label={label}
+                aria-pressed={selectedColor === value}
                 onClick={() => setValue('color', value as ProjectFormValues['color'])}
                 className={cn(
                   'w-8 h-8 rounded-full transition-all',

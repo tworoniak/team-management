@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   DndContext,
   DragOverlay,
@@ -39,8 +39,6 @@ const COLUMNS: { status: TaskStatus; label: string; headerClass: string }[] = [
   },
 ];
 
-const today = new Date().toISOString().split('T')[0];
-
 function KanbanCard({
   task,
   overlay = false,
@@ -48,6 +46,7 @@ function KanbanCard({
   task: Task;
   overlay?: boolean;
 }) {
+  const today = useMemo(() => new Date().toISOString().split('T')[0], []);
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
       id: task.id,
@@ -65,7 +64,7 @@ function KanbanCard({
       ref={setNodeRef}
       style={style}
       className={cn(
-        'rounded-xl border border-white/10 bg-[#0d1630] p-4 shadow-md cursor-grab active:cursor-grabbing select-none',
+        'rounded-xl border border-white/10 bg-card p-4 shadow-md cursor-grab active:cursor-grabbing select-none',
         isOverdue && 'border-red-500/40',
         isDragging && !overlay && 'opacity-25',
         overlay &&
