@@ -1,4 +1,4 @@
-import { Outlet, NavLink } from 'react-router-dom';
+import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { Toaster } from 'sonner';
 import {
   LayoutDashboard,
@@ -10,9 +10,11 @@ import {
   Menu,
   X,
   Brain,
+  LogOut,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { cn } from '../../lib/utils';
+import { useAuthStore } from '../../stores/authStore';
 
 const navItems = [
   { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -23,8 +25,37 @@ const navItems = [
   { path: '/allocation', label: 'AI Allocation', icon: Brain },
 ];
 
+function getInitials(name: string) {
+  return name
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((n) => n[0].toUpperCase())
+    .join('');
+}
+
 export default function Layout() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const user = useAuthStore((s) => s.user);
+  const clearToken = useAuthStore((s) => s.clearToken);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  function handleLogout() {
+    clearToken();
+    navigate('/login', { replace: true });
+  }
 
   return (
     <div className='min-h-screen bg-slate-950 flex'>
@@ -98,13 +129,40 @@ export default function Layout() {
             )}
           </button>
           <div className='flex-1' />
-          <div className='flex items-center gap-3'>
-            <div className='w-8 h-8 rounded-full bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center'>
-              <span className='text-indigo-400 text-xs font-semibold'>TL</span>
-            </div>
-            <span className='text-slate-300 text-sm font-medium hidden sm:block'>
-              Team Lead
-            </span>
+          <div className='relative' ref={dropdownRef}>
+            <button
+              onClick={() => setDropdownOpen((o) => !o)}
+              className='flex items-center gap-3 rounded-xl px-2 py-1.5 hover:bg-slate-800 transition'
+            >
+              <div className='w-8 h-8 rounded-full bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center'>
+                <span className='text-indigo-400 text-xs font-semibold'>
+                  {user ? getInitials(user.name) : '?'}
+                </span>
+              </div>
+              {user && (
+                <span className='text-slate-300 text-sm font-medium hidden sm:block'>
+                  {user.name}
+                </span>
+              )}
+            </button>
+
+            {dropdownOpen && (
+              <div className='absolute right-0 mt-2 w-56 rounded-xl border border-white/10 bg-slate-900 shadow-xl py-1 z-50'>
+                {user && (
+                  <div className='px-4 py-3 border-b border-white/10'>
+                    <p className='text-sm font-medium text-white truncate'>{user.name}</p>
+                    <p className='text-xs text-slate-400 truncate'>{user.email}</p>
+                  </div>
+                )}
+                <button
+                  onClick={handleLogout}
+                  className='flex w-full items-center gap-2.5 px-4 py-2.5 text-sm text-slate-300 hover:text-white hover:bg-slate-800 transition'
+                >
+                  <LogOut className='w-4 h-4' />
+                  Sign out
+                </button>
+              </div>
+            )}
           </div>
         </header>
 

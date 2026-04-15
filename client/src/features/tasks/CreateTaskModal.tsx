@@ -9,6 +9,7 @@ import Button from '../../components/ui/Button';
 import { taskSchema, type TaskFormValues } from './taskSchema';
 import type { Task } from '../../types/task';
 import { useTeam } from '../../hooks/useTeam';
+import { useProjects } from '../../hooks/useProjects';
 
 type TaskModalProps = {
   isOpen: boolean;
@@ -42,6 +43,7 @@ function taskToFormValues(task?: Task | null): TaskFormValues {
     dueDate: task?.dueDate ?? '',
     tags: task?.tags?.join(', ') ?? '',
     requiredSkills: task?.requiredSkills?.join(', ') ?? '',
+    projectId: task?.projectId ?? '',
   };
 }
 
@@ -53,9 +55,16 @@ export default function CreateTaskModal({
   initialTask,
 }: TaskModalProps) {
   const { data: team = [] } = useTeam();
+  const { data: projects = [] } = useProjects();
+
   const assigneeOptions = [
     { label: 'Unassigned', value: 'Unassigned' },
     ...team.map((m) => ({ label: m.fullName, value: m.fullName })),
+  ];
+
+  const projectOptions = [
+    { label: 'No project', value: '' },
+    ...projects.map((p) => ({ label: p.name, value: p.id })),
   ];
 
   const {
@@ -130,6 +139,12 @@ export default function CreateTaskModal({
             {...register('dueDate')}
           />
         </div>
+
+        <Select
+          label='Project'
+          options={projectOptions}
+          {...register('projectId')}
+        />
 
         <Input
           label='Tags'
