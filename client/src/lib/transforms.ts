@@ -19,6 +19,7 @@ export function mapFormValuesToTaskPayload(values: TaskFormValues): TaskCreatePa
         ?.split(',')
         .map((s) => s.trim())
         .filter((s): s is SkillKey => (SKILL_KEYS as readonly string[]).includes(s)) ?? [],
+    projectId: values.projectId || undefined,
   };
 }
 
