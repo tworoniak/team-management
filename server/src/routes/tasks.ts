@@ -22,15 +22,19 @@ const taskSchema = z.object({
 const updateTaskSchema = taskSchema.partial();
 
 // GET /api/tasks
-router.get('/', async (_req, res) => {
-  const tasks = await prisma.task.findMany({ orderBy: { createdAt: 'desc' } });
+router.get('/', async (req, res) => {
+  const tasks = await prisma.task.findMany({
+    where: { userId: req.userId },
+    orderBy: { createdAt: 'desc' },
+  });
   res.json(tasks);
 });
 
 // GET /api/tasks/:id
 router.get('/:id', async (req, res) => {
-  const id = req.params['id'] as string;
-  const task = await prisma.task.findUnique({ where: { id } });
+  const task = await prisma.task.findFirst({
+    where: { id: req.params['id'] as string, userId: req.userId },
+  });
   if (!task) { res.status(404).json({ error: 'Task not found' }); return; }
   res.json(task);
 });
@@ -38,7 +42,7 @@ router.get('/:id', async (req, res) => {
 // POST /api/tasks
 router.post('/', validate(taskSchema), async (req, res) => {
   const data = req.body as z.infer<typeof taskSchema>;
-  const task = await prisma.task.create({ data });
+  const task = await prisma.task.create({ data: { ...data, userId: req.userId } });
   res.status(201).json(task);
 });
 
@@ -46,6 +50,8 @@ router.post('/', validate(taskSchema), async (req, res) => {
 router.patch('/:id', validate(updateTaskSchema), async (req, res) => {
   const id = req.params['id'] as string;
   const data = req.body as z.infer<typeof updateTaskSchema>;
+  const existing = await prisma.task.findFirst({ where: { id, userId: req.userId } });
+  if (!existing) { res.status(404).json({ error: 'Task not found' }); return; }
   const task = await prisma.task.update({ where: { id }, data });
   res.json(task);
 });
@@ -53,7 +59,8 @@ router.patch('/:id', validate(updateTaskSchema), async (req, res) => {
 // DELETE /api/tasks/:id
 router.delete('/:id', async (req, res) => {
   const id = req.params['id'] as string;
-  await prisma.task.delete({ where: { id } });
+  const deleted = await prisma.task.deleteMany({ where: { id, userId: req.userId } });
+  if (deleted.count === 0) { res.status(404).json({ error: 'Task not found' }); return; }
   res.status(204).send();
 });
 

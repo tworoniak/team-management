@@ -1,5 +1,26 @@
 @import 'tailwindcss';
 
+@theme {
+  --color-shell: #050816;
+  --color-panel: #0a1020;
+  --color-card: #0d1630;
+  --color-cardSoft: #121d3d;
+  --color-line: rgba(34, 211, 238, 0.16);
+  --color-borderGlow: rgba(20, 184, 166, 0.45);
+  --color-muted: #93a4c3;
+  --color-textSoft: #c8d4ea;
+  --color-primary: #4f8cff;
+  --color-cyan: #22d3ee;
+  --color-teal: #10b981;
+  --color-violet: #8b5cf6;
+  --color-amber: #f59e0b;
+  --color-redsoft: #ef4444;
+  --shadow-glow: 0 0 0 1px rgba(20, 184, 166, 0.30), 0 0 18px rgba(34, 211, 238, 0.08);
+  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.25);
+  --radius-xl2: 1.25rem;
+  --background-image-gridLines: linear-gradient(rgba(34, 211, 238, 0.10) 1px, transparent 1px), linear-gradient(90deg, rgba(34, 211, 238, 0.10) 1px, transparent 1px);
+}
+
 :root {
   color-scheme: dark;
 }

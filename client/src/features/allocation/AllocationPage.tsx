@@ -31,12 +31,35 @@ export default function AllocationPage() {
   );
 
   const handleApplyAll = () => {
-    results.forEach(({ task, recommendations }) => {
-      const top = recommendations[0];
-      if (!top) return;
-      updateTask.mutate({ id: task.id, assignedTo: top.member.fullName });
+    const toApply = results.filter(({ recommendations }) => recommendations[0]);
+    if (toApply.length === 0) return;
+
+    let settled = 0;
+    let failed = 0;
+
+    toApply.forEach(({ task, recommendations }) => {
+      const top = recommendations[0]!;
+      updateTask.mutate(
+        { id: task.id, assignedTo: top.member.fullName },
+        {
+          onSuccess: () => {
+            settled++;
+            if (settled === toApply.length) {
+              failed > 0
+                ? toast.error(`${failed} assignment${failed !== 1 ? 's' : ''} failed`)
+                : toast.success(`Assigned ${toApply.length} task${toApply.length !== 1 ? 's' : ''} to best matches`);
+            }
+          },
+          onError: () => {
+            failed++;
+            settled++;
+            if (settled === toApply.length) {
+              toast.error(`${failed} assignment${failed !== 1 ? 's' : ''} failed`);
+            }
+          },
+        },
+      );
     });
-    toast.success(`Assigned ${results.length} task${results.length !== 1 ? 's' : ''} to best matches`);
   };
 
   const handleApplyRecommendation = (taskId: string, memberName: string) => {
